@@ -3,22 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#183b36">
-  <title>數字分類樹｜小島食堂</title>
+  <meta name="theme-color" content="#202d3a">
+  <title>數字分類樹｜二元搜尋樹</title>
   <style>
     :root {
       color-scheme: light;
-      --ink: #183b36;
-      --muted: #657873;
-      --paper: #f3f5ef;
-      --surface: #fffefa;
-      --line: #d9e1d9;
-      --green: #1d5949;
-      --green-soft: #dcece3;
-      --orange: #d96748;
-      --orange-soft: #fae8de;
-      --blue: #47778a;
-      --yellow: #e9bf63;
+      --ink: #202d3a;
+      --muted: #667481;
+      --paper: #f2f4f6;
+      --surface: #ffffff;
+      --line: #d9e0e6;
+      --green: #286d7c;
+      --green-soft: #e0eff1;
+      --orange: #d96b4a;
+      --orange-soft: #f8e8e1;
+      --blue: #387d9a;
+      --yellow: #f0c968;
     }
 
     * { box-sizing: border-box; }
@@ -27,31 +27,29 @@
       min-height: 100vh;
       color: var(--ink);
       background-color: var(--paper);
-      background-image: radial-gradient(#d6e0d6 0.7px, transparent 0.7px);
-      background-size: 18px 18px;
+      background-image: linear-gradient(135deg, rgba(255, 255, 255, .72), transparent 52%);
       font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
     }
     button, input, textarea { font: inherit; }
     button { cursor: pointer; }
-    .topbar { background: var(--ink); color: white; border-bottom: 4px solid var(--yellow); }
+    .topbar { background: var(--ink); color: white; border-bottom: 3px solid #68b3c2; }
     .topbar-inner, main { width: min(1240px, calc(100% - 40px)); margin: 0 auto; }
     .topbar-inner { min-height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 18px; }
-    .brand { display: flex; align-items: center; gap: 11px; color: white; text-decoration: none; }
-    .brand-mark { display: grid; place-items: center; width: 36px; aspect-ratio: 1; border: 1px solid #94b6a4; border-radius: 50%; color: var(--yellow); font-family: Georgia, serif; font-size: 20px; }
-    .brand-name { font-size: 14px; font-weight: 800; }
-    .brand-caption { margin-top: 2px; color: #b9d0c4; font-size: 10px; }
-    .back-link { color: #e5eee8; font-size: 12px; text-decoration: none; }
-    .back-link:hover { color: var(--yellow); }
+    .tool-id { display: flex; align-items: center; gap: 11px; }
+    .tool-mark { display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid #617584; color: #8fd0d8; font-family: Georgia, serif; font-size: 21px; }
+    .tool-name { font-size: 14px; font-weight: 800; }
+    .tool-caption { margin-top: 2px; color: #bdc9d2; font-size: 10px; }
+    .topbar-tag { padding: 6px 9px; border: 1px solid #4a5a68; color: #d5dfe5; font-size: 10px; font-weight: 700; }
     main { padding: 40px 0 56px; }
     .intro { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 26px; animation: appear .42s ease both; }
     .eyebrow { margin: 0 0 8px; color: var(--orange); font-size: 11px; font-weight: 800; }
     h1 { margin: 0; font-family: Georgia, "Noto Serif TC", "Microsoft JhengHei", serif; font-size: 40px; line-height: 1.15; }
     .intro p { max-width: 520px; margin: 9px 0 0; color: var(--muted); font-size: 14px; line-height: 1.7; }
-    .rule-note { display: flex; align-items: center; gap: 10px; padding: 10px 13px; border: 1px solid #d7e3d9; background: #fbfcf7; color: var(--muted); font-size: 12px; white-space: nowrap; }
+    .rule-note { display: flex; align-items: center; gap: 10px; padding: 10px 13px; border: 1px solid var(--line); background: #fff; color: var(--muted); font-size: 12px; white-space: nowrap; }
     .rule-note strong { color: var(--ink); }
     .rule-mark { display: grid; place-items: center; width: 28px; height: 28px; background: var(--green-soft); color: var(--green); font-family: Georgia, serif; font-size: 17px; font-weight: 700; }
     .workspace { display: grid; grid-template-columns: 310px minmax(0, 1fr); gap: 20px; align-items: start; }
-    .controls, .tree-panel { min-width: 0; border: 1px solid var(--line); background: var(--surface); box-shadow: 0 14px 36px rgba(24, 59, 54, .07); animation: appear .48s .04s ease both; }
+    .controls, .tree-panel { min-width: 0; border: 1px solid var(--line); background: var(--surface); box-shadow: 0 14px 36px rgba(32, 45, 58, .07); animation: appear .48s .04s ease both; }
     .controls { padding: 20px; }
     h2 { margin: 0; font-size: 16px; }
     .section-kicker { margin: 0 0 5px; color: var(--orange); font-size: 10px; font-weight: 800; }
@@ -72,7 +70,7 @@
     .append-form { display: grid; grid-template-columns: minmax(0, 1fr) 44px; gap: 8px; }
     .icon-button { display: grid; place-items: center; width: 44px; padding: 0; background: var(--orange); color: white; font-size: 22px; line-height: 1; }
     .icon-button:hover:not(:disabled) { background: #bb5338; transform: translateY(-1px); }
-    .icon-button:focus-visible, button:focus-visible, a:focus-visible { outline: 3px solid #e9bf63; outline-offset: 2px; }
+    .icon-button:focus-visible, button:focus-visible, a:focus-visible { outline: 3px solid #68b3c2; outline-offset: 2px; }
     .tree-panel { overflow: hidden; animation-delay: .08s; }
     .tree-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 20px; border-bottom: 1px solid var(--line); }
     .tree-title { display: flex; align-items: center; gap: 10px; }
@@ -124,8 +122,7 @@
       .stat strong { font-size: 17px; }
       .stage, .empty-state { min-height: 340px; }
       .status-line, .legend { padding-left: 15px; padding-right: 15px; }
-      .back-link { font-size: 11px; }
-      .brand-caption { font-size: 9px; }
+      .tool-caption { font-size: 9px; }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
@@ -135,11 +132,11 @@
 <body>
   <header class="topbar">
     <div class="topbar-inner">
-      <a class="brand" href="./index.html" aria-label="返回小島食堂首頁">
-        <span class="brand-mark" aria-hidden="true">島</span>
-        <span><span class="brand-name">小島食堂</span><span class="brand-caption">INTERACTIVE STUDY · 01</span></span>
-      </a>
-      <a class="back-link" href="./index.html">返回排隊點餐</a>
+      <div class="tool-id">
+        <span class="tool-mark" aria-hidden="true">⌘</span>
+        <span><span class="tool-name">資料結構</span><span class="tool-caption">INTERACTIVE VISUALIZER</span></span>
+      </div>
+      <span class="topbar-tag">BINARY SEARCH TREE</span>
     </div>
   </header>
 
