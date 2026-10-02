@@ -71,6 +71,9 @@
     .brand-name { font-size: 17px; font-weight: 800; letter-spacing: 0; }
     .brand-caption { margin-top: 2px; color: #c5d9ce; font-size: 11px; }
     .today { color: #d8e6dd; font-size: 13px; text-align: right; }
+    .topbar-links { display: flex; align-items: center; gap: 24px; }
+    .tool-link { color: #fff; font-size: 13px; font-weight: 700; text-decoration: none; }
+    .tool-link:hover { color: var(--yellow); }
 
     main { padding: 34px 0 56px; }
     .intro {
@@ -230,7 +233,10 @@
         <div class="brand-mark" aria-hidden="true">島</div>
         <div><div class="brand-name">小島食堂</div><div class="brand-caption">ISLAND KITCHEN · ORDER DESK</div></div>
       </div>
-      <div class="today" id="todayLabel"></div>
+      <nav class="topbar-links" aria-label="網站工具">
+        <a class="tool-link" href="./tree.html">數字分類樹</a>
+        <div class="today" id="todayLabel"></div>
+      </nav>
     </div>
   </header>
 
