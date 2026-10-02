@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#173d35">
+  <title>小島食堂｜排隊點餐</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #18332e;
+      --muted: #73817a;
+      --paper: #f5f4ee;
+      --surface: #fffefa;
+      --line: #dfe4dc;
+      --green: #1d5949;
+      --green-soft: #e5f1e9;
+      --coral: #dd7059;
+      --coral-soft: #faebe6;
+      --yellow: #f2cf72;
+      --shadow: 0 18px 48px rgba(28, 57, 47, .08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-width: 900px;
+      min-height: 100vh;
+      color: var(--ink);
+      background-color: var(--paper);
+      background-image: radial-gradient(#dce4d9 0.7px, transparent 0.7px);
+      background-size: 18px 18px;
+      font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+    }
+
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+
+    .topbar {
+      background: var(--green);
+      color: white;
+      border-bottom: 4px solid var(--yellow);
+    }
+
+    .topbar-inner, main {
+      width: min(1160px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    .topbar-inner {
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      aspect-ratio: 1;
+      border: 1px solid rgba(255,255,255,.42);
+      border-radius: 50%;
+      color: var(--yellow);
+      font-family: Georgia, serif;
+      font-size: 23px;
+    }
+    .brand-name { font-size: 17px; font-weight: 800; letter-spacing: 0; }
+    .brand-caption { margin-top: 2px; color: #c5d9ce; font-size: 11px; }
+    .today { color: #d8e6dd; font-size: 13px; text-align: right; }
+
+    main { padding: 34px 0 56px; }
+    .intro {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 24px;
+      animation: arrive .45s ease both;
+    }
+    h1 {
+      margin: 0;
+      font-family: Georgia, "Noto Serif TC", "Microsoft JhengHei", serif;
+      font-size: 34px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    .intro p { margin: 8px 0 0; color: var(--muted); font-size: 14px; }
+    .open-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 13px;
+      border: 1px solid #cce3d3;
+      border-radius: 4px;
+      background: #f2faf3;
+      color: #286849;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .open-badge::before {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4a9a69;
+      content: "";
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      margin-bottom: 22px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      animation: arrive .5s .04s ease both;
+    }
+    .stat { min-height: 94px; padding: 17px 22px; border-right: 1px solid var(--line); }
+    .stat:last-child { border-right: 0; }
+    .stat-label { color: var(--muted); font-size: 12px; }
+    .stat-value { margin-top: 4px; font-family: Georgia, serif; font-size: 30px; font-weight: 700; line-height: 1.1; }
+    .stat-value small { margin-left: 5px; color: var(--muted); font-family: inherit; font-size: 13px; font-weight: 400; }
+    .stat.called .stat-value { color: var(--coral); }
+
+    .columns { display: grid; grid-template-columns: minmax(270px, 350px) minmax(0, 1fr); gap: 22px; align-items: start; }
+    .panel {
+      min-width: 0;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      animation: arrive .5s .08s ease both;
+    }
+    .panel-head { padding: 18px 20px 15px; border-bottom: 1px solid var(--line); }
+    .panel-head-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    h2 { margin: 0; font-size: 17px; }
+    .eyebrow { margin: 0 0 5px; color: var(--coral); font-size: 10px; font-weight: 800; letter-spacing: 0; }
+    .panel-subtitle { margin: 5px 0 0; color: var(--muted); font-size: 12px; }
+    .form-body { padding: 18px 20px 20px; }
+    .field { display: grid; gap: 6px; margin-bottom: 14px; }
+    label { font-size: 12px; font-weight: 700; }
+    input, select, textarea {
+      width: 100%;
+      min-height: 42px;
+      padding: 10px 11px;
+      border: 1px solid #d6ded5;
+      border-radius: 3px;
+      outline: none;
+      background: #fff;
+      color: var(--ink);
+      font-size: 14px;
+    }
+    textarea { min-height: 72px; resize: vertical; }
+    input:focus, select:focus, textarea:focus { border-color: #47856e; box-shadow: 0 0 0 3px rgba(71,133,110,.13); }
+    .form-row { display: grid; grid-template-columns: minmax(0, 1fr) 86px; gap: 10px; }
+    .field-hint { color: var(--muted); font-size: 11px; }
+    .primary, .quiet, .call-button, .row-action {
+      min-height: 40px;
+      border: 0;
+      border-radius: 3px;
+      font-weight: 700;
+      transition: transform .16s ease, background .16s ease;
+    }
+    .primary { width: 100%; margin-top: 2px; background: var(--green); color: white; }
+    .primary:hover, .call-button:hover { background: #124535; transform: translateY(-1px); }
+    .quiet { padding: 0 12px; background: #edf1eb; color: var(--ink); font-size: 12px; }
+    .quiet:hover { background: #e0e8df; }
+    .current-call { padding: 18px 20px; background: #183d34; color: white; }
+    .current-call-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; color: #bfd7ca; font-size: 11px; }
+    .current-ticket { margin-top: 8px; color: var(--yellow); font-family: Georgia, serif; font-size: 48px; font-weight: 700; line-height: 1; }
+    .current-customer { margin-top: 7px; font-size: 16px; font-weight: 700; }
+    .current-order { margin-top: 4px; color: #d2e0d7; font-size: 12px; }
+    .call-button { width: 100%; margin-top: 15px; background: var(--coral); color: white; }
+    .call-button:disabled { cursor: not-allowed; opacity: .48; transform: none; }
+    .no-call { padding: 18px 0; color: #d2e0d7; font-size: 13px; }
+
+    .queue-panel { animation-delay: .12s; }
+    .queue-tools { display: flex; align-items: center; gap: 8px; }
+    .filter-select { width: auto; min-height: 34px; padding: 5px 26px 5px 9px; font-size: 12px; }
+    .queue-scroll { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th { padding: 11px 14px; background: #f6f7f2; color: var(--muted); font-size: 11px; font-weight: 700; white-space: nowrap; }
+    td { padding: 13px 14px; border-top: 1px solid #edf0ea; font-size: 12px; vertical-align: middle; }
+    .ticket-cell { min-width: 68px; color: var(--green); font-family: Georgia, serif; font-size: 17px; font-weight: 700; }
+    .customer-name { font-weight: 700; }
+    .customer-phone, .order-detail { margin-top: 3px; color: var(--muted); font-size: 11px; }
+    .status-pill { display: inline-block; padding: 4px 8px; border-radius: 2px; background: #f0f1ed; color: #69756c; font-size: 10px; white-space: nowrap; }
+    .status-pill.waiting { background: var(--green-soft); color: #286849; }
+    .status-pill.called { background: var(--coral-soft); color: #aa4e3a; }
+    .row-actions { display: flex; align-items: center; justify-content: end; gap: 6px; white-space: nowrap; }
+    .row-action { min-height: 31px; padding: 0 9px; background: #edf1eb; color: var(--ink); font-size: 11px; }
+    .row-action:hover { background: #dfe8df; }
+    .row-action.cancel { background: transparent; color: #a05d50; }
+    .row-action.cancel:hover { background: #faebe6; }
+    .empty { padding: 44px 16px; color: var(--muted); text-align: center; font-size: 13px; }
+    .privacy-note { display: flex; gap: 8px; margin: 13px 2px 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
+    .privacy-note strong { color: #5b6d63; }
+    .toast {
+      position: fixed;
+      z-index: 5;
+      right: 22px;
+      bottom: 22px;
+      max-width: min(360px, calc(100vw - 32px));
+      padding: 13px 16px;
+      transform: translateY(12px);
+      opacity: 0;
+      border-radius: 3px;
+      background: var(--ink);
+      color: white;
+      font-size: 13px;
+      pointer-events: none;
+      transition: .2s ease;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    @keyframes arrive { from { transform: translateY(8px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">島</div>
+        <div><div class="brand-name">小島食堂</div><div class="brand-caption">ISLAND KITCHEN · ORDER DESK</div></div>
+      </div>
+      <div class="today" id="todayLabel"></div>
+    </div>
+  </header>
+
+  <main>
+    <section class="intro" aria-labelledby="pageTitle">
+      <div>
+        <h1 id="pageTitle">排隊點餐</h1>
+        <p>登記餐點、掌握候位，輪到時為客人叫號。</p>
+      </div>
+      <div class="open-badge">今日營業中</div>
+    </section>
+
+    <section class="stats" aria-label="今日候位統計">
+      <div class="stat"><div class="stat-label">等候中</div><div class="stat-value" id="waitingCount">0<small>組</small></div></div>
+      <div class="stat called"><div class="stat-label">已叫號</div><div class="stat-value" id="calledCount">0<small>組</small></div></div>
+      <div class="stat"><div class="stat-label">今日已完成</div><div class="stat-value" id="doneCount">0<small>組</small></div></div>
+    </section>
+
+    <div class="columns">
+      <section class="panel entry-panel" aria-labelledby="entryTitle">
+        <div class="panel-head">
+          <p class="eyebrow">NEW ORDER</p>
+          <h2 id="entryTitle">登記候位</h2>
+          <p class="panel-subtitle">填寫聯絡方式與餐點，取得今日號碼牌。</p>
+        </div>
+        <form id="orderForm" class="form-body">
+          <div class="field">
+            <label for="customerName">客人姓名</label>
+            <input id="customerName" name="name" autocomplete="name" maxlength="40" placeholder="例如：林小姐" required>
+          </div>
+          <div class="field">
+            <label for="customerPhone">聯絡電話</label>
+            <input id="customerPhone" name="phone" type="tel" autocomplete="tel" maxlength="20" placeholder="例如：0912 345 678" pattern="[0-9+ ]{8,20}" title="請輸入 8 至 20 個數字、空格或電話符號" required>
+            <span class="field-hint">僅供本次候位聯絡使用。</span>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="dish">餐點</label>
+              <select id="dish" name="dish" required>
+                <option value="島嶼雞腿飯">島嶼雞腿飯</option>
+                <option value="炙燒鮭魚飯">炙燒鮭魚飯</option>
+                <option value="香煎豆腐飯">香煎豆腐飯</option>
+                <option value="季節蔬菜麵">季節蔬菜麵</option>
+                <option value="今日湯品">今日湯品</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="quantity">份數</label>
+              <input id="quantity" name="quantity" type="number" min="1" max="20" value="1" required>
+            </div>
+          </div>
+          <div class="field">
+            <label for="note">備註 <span class="field-hint">選填</span></label>
+            <textarea id="note" name="note" maxlength="100" placeholder="例如：不要香菜、外帶"></textarea>
+          </div>
+          <button class="primary" type="submit">加入候位並取號</button>
+        </form>
+        <p class="privacy-note"><span aria-hidden="true">ⓘ</span><span><strong>資料儲存提醒</strong><br>此展示版將資料保存在目前裝置的瀏覽器，不會同步到其他手機或電腦。</span></p>
+      </section>
+
+      <section class="panel queue-panel" aria-labelledby="queueTitle">
+        <div class="panel-head">
+          <div class="panel-head-row">
+            <div>
+              <p class="eyebrow">LIVE QUEUE</p>
+              <h2 id="queueTitle">候位隊列</h2>
+            </div>
+            <div class="queue-tools">
+              <select class="filter-select" id="queueFilter" aria-label="篩選隊列">
+                <option value="active">進行中</option>
+                <option value="all">全部紀錄</option>
+                <option value="waiting">等候中</option>
+                <option value="called">已叫號</option>
+                <option value="done">已完成</option>
+              </select>
+              <button class="quiet" type="button" id="clearButton" title="清除今日紀錄">清除今日</button>
+            </div>
+          </div>
+        </div>
+        <div class="current-call" aria-live="polite">
+          <div class="current-call-top"><span>NOW CALLING · 目前叫號</span><span id="calledTime"></span></div>
+          <div id="currentCallContent" class="no-call">尚未叫號，按下方按鈕呼叫下一位。</div>
+          <button class="call-button" type="button" id="nextButton">叫下一位</button>
+        </div>
+        <div id="queueContent"></div>
+      </section>
+    </div>
+  </main>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const STORAGE_KEY = "island-kitchen-queue-v1";
+    const today = new Date();
+    const dayKey = [today.getFullYear(), String(today.getMonth() + 1).padStart(2, "0"), String(today.getDate()).padStart(2, "0")].join("-");
+    const state = loadState();
+    const orderForm = document.querySelector("#orderForm");
+    const queueContent = document.querySelector("#queueContent");
+    const filter = document.querySelector("#queueFilter");
+    let toastTimer;
+
+    document.querySelector("#todayLabel").textContent = today.toLocaleDateString("zh-TW", { year: "numeric", month: "long", day: "numeric", weekday: "long" });
+
+    function loadState() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+        return Array.isArray(saved) ? saved.filter(item => item && typeof item.ticket === "string" && typeof item.day === "string") : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        return true;
+      } catch {
+        showToast("瀏覽器無法儲存資料，請檢查儲存空間設定。");
+        return false;
+      }
+    }
+
+    function todayOrders() {
+      return state.filter(order => order.day === dayKey).sort((a, b) => a.createdAt - b.createdAt);
+    }
+
+    function nextTicket() {
+      const lastNumber = todayOrders().reduce((max, order) => Math.max(max, Number(order.ticket.slice(1)) || 0), 0);
+      return `A${String(lastNumber + 1).padStart(3, "0")}`;
+    }
+
+    function safeText(value) {
+      const node = document.createElement("span");
+      node.textContent = value;
+      return node.innerHTML;
+    }
+
+    function statusLabel(status) {
+      return ({ waiting: "等候中", called: "已叫號", done: "已完成", cancelled: "已取消" })[status] || "等候中";
+    }
+
+    function render() {
+      const orders = todayOrders();
+      const waiting = orders.filter(order => order.status === "waiting");
+      const called = orders.filter(order => order.status === "called");
+      const done = orders.filter(order => order.status === "done");
+      document.querySelector("#waitingCount").innerHTML = `${waiting.length}<small>組</small>`;
+      document.querySelector("#calledCount").innerHTML = `${called.length}<small>組</small>`;
+      document.querySelector("#doneCount").innerHTML = `${done.length}<small>組</small>`;
+
+      const activeCall = called.sort((a, b) => (b.calledAt || 0) - (a.calledAt || 0))[0];
+      const callContent = document.querySelector("#currentCallContent");
+      const nextButton = document.querySelector("#nextButton");
+      if (activeCall) {
+        callContent.className = "";
+        callContent.innerHTML = `<div class="current-ticket">${safeText(activeCall.ticket)}</div><div class="current-customer">${safeText(activeCall.name)} · ${safeText(activeCall.phone)}</div><div class="current-order">${safeText(activeCall.dish)} × ${activeCall.quantity}${activeCall.note ? ` · ${safeText(activeCall.note)}` : ""}</div>`;
+        document.querySelector("#calledTime").textContent = new Date(activeCall.calledAt).toLocaleTimeString("zh-TW", { hour: "2-digit", minute: "2-digit" });
+      } else {
+        callContent.className = "no-call";
+        callContent.textContent = "尚未叫號，按下方按鈕呼叫下一位。";
+        document.querySelector("#calledTime").textContent = "";
+      }
+      nextButton.disabled = waiting.length === 0;
+
+      let visible = orders;
+      if (filter.value === "active") visible = orders.filter(order => ["waiting", "called"].includes(order.status));
+      else if (filter.value !== "all") visible = orders.filter(order => order.status === filter.value);
+      visible = visible.slice().reverse();
+
+      if (!visible.length) {
+        queueContent.innerHTML = `<div class="empty">${orders.length ? "這個分類目前沒有紀錄。" : "隊列還是空的，先替第一位客人登記吧。"}</div>`;
+        return;
+      }
+
+      const rows = visible.map(order => {
+        const actions = order.status === "waiting"
+          ? `<button class="row-action" data-action="call" data-ticket="${safeText(order.ticket)}">叫號</button><button class="row-action cancel" data-action="cancel" data-ticket="${safeText(order.ticket)}">取消</button>`
+          : order.status === "called"
+            ? `<button class="row-action" data-action="done" data-ticket="${safeText(order.ticket)}">完成</button><button class="row-action cancel" data-action="cancel" data-ticket="${safeText(order.ticket)}">取消</button>`
+            : "<span class=\"field-hint\">—</span>";
+        const details = `${safeText(order.dish)} × ${order.quantity}${order.note ? `<div class="order-detail">${safeText(order.note)}</div>` : ""}`;
+        return `<tr><td class="ticket-cell">${safeText(order.ticket)}</td><td><div class="customer-name">${safeText(order.name)}</div><div class="customer-phone">${safeText(order.phone)}</div></td><td>${details}</td><td><span class="status-pill ${order.status}">${statusLabel(order.status)}</span></td><td><div class="row-actions">${actions}</div></td></tr>`;
+      }).join("");
+
+      queueContent.innerHTML = `<div class="queue-scroll"><table><thead><tr><th>號碼</th><th>客人</th><th>餐點</th><th>狀態</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    }
+
+    function showToast(message) {
+      const toast = document.querySelector("#toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 2800);
+    }
+
+    orderForm.addEventListener("submit", event => {
+      event.preventDefault();
+      if (!orderForm.reportValidity()) return;
+      const data = new FormData(orderForm);
+      const order = {
+        ticket: nextTicket(),
+        day: dayKey,
+        name: String(data.get("name")).trim(),
+        phone: String(data.get("phone")).trim(),
+        dish: String(data.get("dish")),
+        quantity: Number(data.get("quantity")),
+        note: String(data.get("note")).trim(),
+        status: "waiting",
+        createdAt: Date.now()
+      };
+      state.push(order);
+      if (!saveState()) { state.pop(); return; }
+      orderForm.reset();
+      document.querySelector("#quantity").value = 1;
+      render();
+      showToast(`登記完成，號碼牌 ${order.ticket}。`);
+    });
+
+    document.querySelector("#nextButton").addEventListener("click", () => {
+      const order = todayOrders().find(item => item.status === "waiting");
+      if (!order) return;
+      order.status = "called";
+      order.calledAt = Date.now();
+      saveState();
+      render();
+      showToast(`正在呼叫 ${order.ticket}，${order.name}。`);
+    });
+
+    queueContent.addEventListener("click", event => {
+      const button = event.target.closest("button[data-action]");
+      if (!button) return;
+      const order = todayOrders().find(item => item.ticket === button.dataset.ticket);
+      if (!order) return;
+      const action = button.dataset.action;
+      if (action === "call" && order.status === "waiting") {
+        order.status = "called";
+        order.calledAt = Date.now();
+      } else if (action === "done" && order.status === "called") {
+        order.status = "done";
+        order.completedAt = Date.now();
+      } else if (action === "cancel" && ["waiting", "called"].includes(order.status)) {
+        order.status = "cancelled";
+      }
+      saveState();
+      render();
+    });
+
+    filter.addEventListener("change", render);
+    document.querySelector("#clearButton").addEventListener("click", () => {
+      const todaysOrders = todayOrders();
+      if (!todaysOrders.length) { showToast("今天還沒有候位紀錄。"); return; }
+      if (!confirm(`確定清除今天 ${todaysOrders.length} 筆候位紀錄？此操作無法復原。`)) return;
+      for (let index = state.length - 1; index >= 0; index--) {
+        if (state[index].day === dayKey) state.splice(index, 1);
+      }
+      saveState();
+      render();
+      showToast("今日紀錄已清除。");
+    });
+
+    render();
+  </script>
+</body>
+</html>
