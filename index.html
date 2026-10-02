@@ -168,6 +168,7 @@
     .primary:hover, .call-button:hover { background: #124535; transform: translateY(-1px); }
     .quiet { padding: 0 12px; background: #edf1eb; color: var(--ink); font-size: 12px; }
     .quiet:hover { background: #e0e8df; }
+    .sample-button { width: 100%; margin-top: 9px; }
     .current-call { padding: 18px 20px; background: #183d34; color: white; }
     .current-call-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; color: #bfd7ca; font-size: 11px; }
     .current-ticket { margin-top: 8px; color: var(--yellow); font-family: Georgia, serif; font-size: 48px; font-weight: 700; line-height: 1; }
@@ -286,6 +287,7 @@
             <textarea id="note" name="note" maxlength="100" placeholder="例如：不要香菜、外帶"></textarea>
           </div>
           <button class="primary" type="submit">加入候位並取號</button>
+          <button class="quiet sample-button" type="button" id="sampleButton">產生 3 位範例客人</button>
         </form>
         <p class="privacy-note"><span aria-hidden="true">ⓘ</span><span><strong>資料儲存提醒</strong><br>此展示版將資料保存在目前裝置的瀏覽器，不會同步到其他手機或電腦。</span></p>
       </section>
@@ -360,6 +362,35 @@
       return `A${String(lastNumber + 1).padStart(3, "0")}`;
     }
 
+    function createOrder(details) {
+      return {
+        ticket: nextTicket(),
+        day: dayKey,
+        name: details.name,
+        phone: details.phone,
+        dish: details.dish,
+        quantity: details.quantity,
+        note: details.note,
+        status: "waiting",
+        createdAt: Date.now()
+      };
+    }
+
+    function addOrders(orderDetails) {
+      const addedOrders = [];
+      for (const details of orderDetails) {
+        const order = createOrder(details);
+        state.push(order);
+        addedOrders.push(order);
+      }
+      if (!saveState()) {
+        state.splice(-addedOrders.length, addedOrders.length);
+        return null;
+      }
+      render();
+      return addedOrders;
+    }
+
     function safeText(value) {
       const node = document.createElement("span");
       node.textContent = value;
@@ -428,23 +459,29 @@
       event.preventDefault();
       if (!orderForm.reportValidity()) return;
       const data = new FormData(orderForm);
-      const order = {
-        ticket: nextTicket(),
-        day: dayKey,
+      const [order] = addOrders([{
         name: String(data.get("name")).trim(),
         phone: String(data.get("phone")).trim(),
         dish: String(data.get("dish")),
         quantity: Number(data.get("quantity")),
-        note: String(data.get("note")).trim(),
-        status: "waiting",
-        createdAt: Date.now()
-      };
-      state.push(order);
-      if (!saveState()) { state.pop(); return; }
+        note: String(data.get("note")).trim()
+      }]);
+      if (!order) return;
       orderForm.reset();
       document.querySelector("#quantity").value = 1;
-      render();
       showToast(`登記完成，號碼牌 ${order.ticket}。`);
+    });
+
+    document.querySelector("#sampleButton").addEventListener("click", () => {
+      const sampleCustomers = [
+        { name: "林小晴", phone: "0900 000 001", dish: "島嶼雞腿飯", quantity: 1, note: "範例資料" },
+        { name: "陳柏翰", phone: "0900 000 002", dish: "炙燒鮭魚飯", quantity: 2, note: "範例資料" },
+        { name: "王怡安", phone: "0900 000 003", dish: "香煎豆腐飯", quantity: 1, note: "範例資料" }
+      ];
+      filter.value = "active";
+      const addedOrders = addOrders(sampleCustomers);
+      if (!addedOrders) return;
+      showToast(`已加入 3 位範例客人，號碼 ${addedOrders[0].ticket} 至 ${addedOrders[2].ticket}。`);
     });
 
     document.querySelector("#nextButton").addEventListener("click", () => {
