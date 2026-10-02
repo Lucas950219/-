@@ -86,7 +86,7 @@
     .mode-button { min-height: 32px; padding: 0 12px; border: 0; background: transparent; color: var(--muted); font-size: 12px; font-weight: 700; }
     .mode-button[aria-checked="true"] { background: var(--ink); color: white; }
     .mode-button:focus-visible { position: relative; outline: 3px solid #68b3c2; outline-offset: 1px; }
-    .traversal-output { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin-top: 13px; }
+    .traversal-output { display: block; margin-top: 13px; }
     .traversal-sequence { min-width: 0; flex: 1; }
     .sequence-heading { display: flex; align-items: baseline; gap: 8px; }
     .sequence-heading strong { font-size: 12px; }
@@ -101,7 +101,23 @@
     .sequence-count { color: var(--muted); font-size: 10px; }
     .sequence-list li.current .sequence-count { color: #fff; }
     .sequence-empty { margin: 9px 0 0; color: var(--muted); font-size: 11px; }
-    .play-button { flex: 0 0 auto; min-height: 36px; align-self: end; padding: 0 11px; border: 1px solid var(--line); background: #fff; color: var(--ink); font-size: 11px; font-weight: 700; }
+    .trace-panel { margin-top: 16px; padding-top: 13px; border-top: 1px solid var(--line); }
+    .trace-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+    .trace-heading strong { font-size: 12px; }
+    .trace-count { color: var(--muted); font-size: 10px; }
+    .trace-empty { margin: 8px 0 0; color: var(--muted); font-size: 11px; }
+    .trace-list { display: grid; gap: 4px; max-height: 280px; overflow-y: auto; margin: 9px 0 0; padding: 0 4px 0 0; list-style: none; }
+    .trace-list li { display: grid; grid-template-columns: 28px minmax(0, 1fr); align-items: start; gap: 8px; padding: 6px 8px; border-left: 2px solid transparent; color: var(--muted); font-size: 11px; line-height: 1.45; }
+    .trace-list li.current { border-left-color: var(--orange); background: var(--orange-soft); color: var(--ink); }
+    .trace-list li.completed { color: #477b82; }
+    .trace-step-number { color: #87939d; font-family: Georgia, serif; font-size: 10px; text-align: right; }
+    .trace-list li.current .trace-step-number { color: var(--orange); font-weight: 700; }
+    .trace-controls { display: flex; align-items: center; gap: 6px; margin-top: 9px; }
+    .trace-control, .play-button { min-height: 36px; border: 1px solid var(--line); background: #fff; color: var(--ink); font-size: 11px; font-weight: 700; }
+    .trace-control { width: 38px; padding: 0; }
+    .trace-control:hover:not(:disabled), .play-button:hover:not(:disabled) { border-color: var(--green); background: var(--green-soft); }
+    .play-button { flex: 1; padding: 0 11px; }
+    .node-circle.trace-current { stroke: #f3c5b4; stroke-width: 8; }
     .play-button:hover:not(:disabled) { border-color: var(--green); background: var(--green-soft); }
     .stage { min-height: 430px; overflow: auto; background-color: #fbfcf8; background-image: linear-gradient(#eaf0e8 1px, transparent 1px), linear-gradient(90deg, #eaf0e8 1px, transparent 1px); background-size: 28px 28px; }
     .empty-state { display: grid; min-height: 430px; place-content: center; padding: 28px; color: var(--muted); text-align: center; }
@@ -147,9 +163,9 @@
       .traversal-top { align-items: flex-start; flex-direction: column; gap: 8px; }
       .mode-switch { width: 100%; }
       .mode-button { flex: 1; padding: 0 6px; }
-      .traversal-output { gap: 9px; }
+      .traversal-output { display: block; }
       .sequence-heading { flex-wrap: wrap; gap: 4px 8px; }
-      .play-button { padding: 0 8px; }
+      .trace-list { max-height: 220px; }
       .stats { gap: 11px; }
       .stat { font-size: 9px; }
       .stat strong { font-size: 17px; }
@@ -237,7 +253,16 @@
               <p class="sequence-empty" id="sequenceEmpty">建立分類樹後，這裡會列出節點順序。</p>
               <ol class="sequence-list" id="sequenceList" aria-label="節點走訪順序"></ol>
             </div>
-            <button class="play-button" id="playButton" type="button" title="依順序播放節點" disabled>▶ 播放走訪</button>
+            <div class="trace-panel" aria-label="完整走訪過程">
+              <div class="trace-heading"><strong>完整走訪過程</strong><span class="trace-count" id="traceCount">0 個步驟</span></div>
+              <p class="trace-empty" id="traceEmpty">建立分類樹後，會列出每次遞迴呼叫與返回。</p>
+              <ol class="trace-list" id="traceList" aria-label="走訪執行步驟"></ol>
+              <div class="trace-controls" aria-label="走訪步驟控制">
+                <button class="trace-control" id="previousStepButton" type="button" aria-label="上一步" title="上一步" disabled>←</button>
+                <button class="play-button" id="playButton" type="button" title="依序播放完整走訪過程" disabled>▶ 播放過程</button>
+                <button class="trace-control" id="nextStepButton" type="button" aria-label="下一步" title="下一步" disabled>→</button>
+              </div>
+            </div>
           </div>
         </section>
         <div class="stage" id="treeStage">
@@ -263,6 +288,11 @@
     const sequenceList = document.querySelector("#sequenceList");
     const sequenceEmpty = document.querySelector("#sequenceEmpty");
     const playButton = document.querySelector("#playButton");
+    const traceList = document.querySelector("#traceList");
+    const traceEmpty = document.querySelector("#traceEmpty");
+    const traceCount = document.querySelector("#traceCount");
+    const previousStepButton = document.querySelector("#previousStepButton");
+    const nextStepButton = document.querySelector("#nextStepButton");
     const modeButtons = [...document.querySelectorAll(".mode-button")];
     const TRAVERSAL_MODES = {
       preorder: { label: "前序", description: "根 → 左子樹 → 右子樹" },
@@ -276,7 +306,9 @@
     let isBusy = false;
     let traversalMode = "preorder";
     let traversalOrder = [];
+    let traversalTrace = [];
     let traversalStep = -1;
+    let traceStep = -1;
     let traversalPlaybackId = 0;
     let isPlayingTraversal = false;
 
@@ -329,13 +361,34 @@
       return node ? 1 + Math.max(treeHeight(node.left), treeHeight(node.right)) : 0;
     }
 
-    function collectTraversal(node, nodes) {
-      if (!node) return;
-      if (traversalMode === "preorder") nodes.push(node);
-      collectTraversal(node.left, nodes);
-      if (traversalMode === "inorder") nodes.push(node);
-      collectTraversal(node.right, nodes);
-      if (traversalMode === "postorder") nodes.push(node);
+    function collectTraversal(node, nodes, trace, parent = null, side = "") {
+      if (!node) {
+        if (parent) trace.push({ kind: "empty", node: parent, text: `${parent.value} 的${side}子樹為空，不進入。` });
+        return;
+      }
+
+      trace.push({ kind: "visit", node, text: `到達節點 ${node.value}。` });
+      if (traversalMode === "preorder") {
+        nodes.push(node);
+        trace.push({ kind: "output", node, sequenceIndex: nodes.length - 1, text: `輸出 ${node.value}，成為第 ${nodes.length} 個節點。` });
+      }
+
+      trace.push({ kind: "check", node, text: `檢查 ${node.value} 的左子樹。` });
+      collectTraversal(node.left, nodes, trace, node, "左");
+
+      if (traversalMode === "inorder") {
+        nodes.push(node);
+        trace.push({ kind: "output", node, sequenceIndex: nodes.length - 1, text: `輸出 ${node.value}，成為第 ${nodes.length} 個節點。` });
+      }
+
+      trace.push({ kind: "check", node, text: `檢查 ${node.value} 的右子樹。` });
+      collectTraversal(node.right, nodes, trace, node, "右");
+
+      if (traversalMode === "postorder") {
+        nodes.push(node);
+        trace.push({ kind: "output", node, sequenceIndex: nodes.length - 1, text: `輸出 ${node.value}，成為第 ${nodes.length} 個節點。` });
+      }
+      trace.push({ kind: "return", node, text: `節點 ${node.value} 的子樹處理完成，返回上一層。` });
     }
 
     function updateTraversalOutput() {
@@ -363,8 +416,26 @@
         sequenceList.appendChild(item);
       });
       sequenceEmpty.hidden = traversalOrder.length > 0;
-      playButton.disabled = isBusy || traversalOrder.length === 0 || isPlayingTraversal;
-      playButton.textContent = traversalStep === traversalOrder.length - 1 && traversalOrder.length > 0 ? "↻ 重新播放" : "▶ 播放走訪";
+      traceList.replaceChildren();
+      traversalTrace.forEach((event, index) => {
+        const item = document.createElement("li");
+        item.dataset.index = String(index);
+        item.dataset.nodeId = String(event.node.id);
+        item.classList.add(event.kind);
+        const number = document.createElement("span");
+        number.className = "trace-step-number";
+        number.textContent = String(index + 1).padStart(2, "0");
+        const text = document.createElement("span");
+        text.textContent = event.text;
+        item.append(number, text);
+        traceList.appendChild(item);
+      });
+      traceEmpty.hidden = traversalTrace.length > 0;
+      traceCount.textContent = `${traversalTrace.length} 個步驟`;
+      previousStepButton.disabled = isBusy || isPlayingTraversal || traceStep <= 0;
+      nextStepButton.disabled = isBusy || isPlayingTraversal || traceStep >= traversalTrace.length - 1;
+      playButton.disabled = isBusy || traversalTrace.length === 0 || isPlayingTraversal;
+      playButton.textContent = traceStep === traversalTrace.length - 1 && traversalTrace.length > 0 ? "↻ 重新播放" : "▶ 播放過程";
       updateTraversalHighlights();
     }
 
@@ -374,12 +445,18 @@
         item.classList.toggle("visited", traversalStep > index);
         item.classList.toggle("current", traversalStep === index);
       });
+      traceList.querySelectorAll("li").forEach(item => {
+        const index = Number(item.dataset.index);
+        item.classList.toggle("completed", index < traceStep);
+        item.classList.toggle("current", index === traceStep);
+      });
       const treeSvg = document.querySelector("#treeSvg");
       if (!treeSvg) return;
       treeSvg.querySelectorAll(".node-circle").forEach(circle => {
         const index = traversalOrder.findIndex(node => String(node.id) === circle.dataset.nodeId);
         circle.classList.toggle("traversal-visited", index >= 0 && traversalStep > index);
         circle.classList.toggle("traversal-current", index >= 0 && traversalStep === index);
+        circle.classList.toggle("trace-current", index >= 0 && traversalTrace[traceStep]?.node.id === Number(circle.dataset.nodeId));
       });
     }
 
@@ -397,13 +474,15 @@
         appendButton.disabled = true;
         clearButton.disabled = true;
         traversalOrder = [];
+        traversalTrace = [];
         updateTraversalOutput();
         return;
       }
       const entries = [];
       collectNodes(root, 0, entries);
       traversalOrder = [];
-      collectTraversal(root, traversalOrder);
+      traversalTrace = [];
+      collectTraversal(root, traversalOrder, traversalTrace);
       const gapX = 108;
       const gapY = 102;
       const marginX = 62;
@@ -486,33 +565,47 @@
       appendButton.disabled = busy || !root;
       clearButton.disabled = busy || !root;
       modeButtons.forEach(button => button.disabled = busy);
-      playButton.disabled = busy || traversalOrder.length === 0 || isPlayingTraversal;
+      updateTraversalOutput();
     }
 
     function cancelTraversalPlayback() {
       traversalPlaybackId += 1;
       isPlayingTraversal = false;
       traversalStep = -1;
+      traceStep = -1;
     }
 
     async function playTraversal() {
-      if (!traversalOrder.length || isPlayingTraversal) return;
+      if (!traversalTrace.length || isPlayingTraversal) return;
       const playbackId = ++traversalPlaybackId;
       isPlayingTraversal = true;
       traversalStep = -1;
+      traceStep = -1;
       updateTraversalOutput();
-      for (let index = 0; index < traversalOrder.length; index += 1) {
+      for (let index = 0; index < traversalTrace.length; index += 1) {
         if (playbackId !== traversalPlaybackId) return;
-        traversalStep = index;
+        traceStep = index;
+        if (traversalTrace[index].kind === "output") traversalStep = traversalTrace[index].sequenceIndex;
         updateTraversalHighlights();
-        const node = traversalOrder[index];
-        statusText.textContent = `${TRAVERSAL_MODES[traversalMode].label}走訪：第 ${index + 1} 個節點是 ${node.value}。`;
-        await wait(600);
+        statusText.textContent = `${TRAVERSAL_MODES[traversalMode].label}走訪第 ${index + 1}/${traversalTrace.length} 步：${traversalTrace[index].text}`;
+        await wait(420);
       }
       if (playbackId !== traversalPlaybackId) return;
       isPlayingTraversal = false;
       updateTraversalOutput();
-      statusText.textContent = `${TRAVERSAL_MODES[traversalMode].label}走訪完成，共 ${traversalOrder.length} 個節點。`;
+      statusText.textContent = `${TRAVERSAL_MODES[traversalMode].label}走訪完成，共執行 ${traversalTrace.length} 個步驟，輸出 ${traversalOrder.length} 個節點。`;
+    }
+
+    function moveTraversalStep(direction) {
+      if (!traversalTrace.length || isBusy || isPlayingTraversal) return;
+      const nextIndex = Math.max(0, Math.min(traversalTrace.length - 1, traceStep + direction));
+      traceStep = nextIndex;
+      traversalStep = -1;
+      for (let index = 0; index <= traceStep; index += 1) {
+        if (traversalTrace[index].kind === "output") traversalStep = traversalTrace[index].sequenceIndex;
+      }
+      updateTraversalOutput();
+      statusText.textContent = `${TRAVERSAL_MODES[traversalMode].label}走訪第 ${traceStep + 1}/${traversalTrace.length} 步：${traversalTrace[traceStep].text}`;
     }
 
     function wait(milliseconds) {
@@ -577,6 +670,8 @@
     });
 
     playButton.addEventListener("click", playTraversal);
+    previousStepButton.addEventListener("click", () => moveTraversalStep(-1));
+    nextStepButton.addEventListener("click", () => moveTraversalStep(1));
 
     appendButton.addEventListener("click", () => {
       const value = appendInput.valueAsNumber;
