@@ -79,6 +79,30 @@
     .stats { display: flex; gap: 20px; }
     .stat { color: var(--muted); font-size: 10px; text-align: right; }
     .stat strong { display: block; color: var(--ink); font-family: Georgia, serif; font-size: 20px; line-height: 1.1; }
+    .traversal-tools { padding: 15px 20px; border-bottom: 1px solid var(--line); }
+    .traversal-top { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+    .traversal-label { color: var(--muted); font-size: 11px; font-weight: 700; }
+    .mode-switch { display: inline-flex; padding: 3px; border: 1px solid var(--line); background: #f3f5f7; }
+    .mode-button { min-height: 32px; padding: 0 12px; border: 0; background: transparent; color: var(--muted); font-size: 12px; font-weight: 700; }
+    .mode-button[aria-checked="true"] { background: var(--ink); color: white; }
+    .mode-button:focus-visible { position: relative; outline: 3px solid #68b3c2; outline-offset: 1px; }
+    .traversal-output { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin-top: 13px; }
+    .traversal-sequence { min-width: 0; flex: 1; }
+    .sequence-heading { display: flex; align-items: baseline; gap: 8px; }
+    .sequence-heading strong { font-size: 12px; }
+    .sequence-description { color: var(--muted); font-size: 10px; }
+    .sequence-list { display: flex; flex-wrap: wrap; gap: 7px; margin: 9px 0 0; padding: 0; list-style: none; }
+    .sequence-list li { display: inline-flex; align-items: center; gap: 7px; min-height: 30px; padding: 4px 8px; border: 1px solid var(--line); background: #fff; color: var(--ink); transition: background .16s ease, border-color .16s ease, color .16s ease; }
+    .sequence-list li.visited { border-color: #bdd7dc; background: #e8f3f4; }
+    .sequence-list li.current { border-color: var(--orange); background: var(--orange); color: #fff; }
+    .sequence-index { color: var(--muted); font-family: Georgia, serif; font-size: 10px; }
+    .sequence-list li.current .sequence-index { color: #fff; }
+    .sequence-value { font-family: Georgia, serif; font-size: 14px; font-weight: 700; }
+    .sequence-count { color: var(--muted); font-size: 10px; }
+    .sequence-list li.current .sequence-count { color: #fff; }
+    .sequence-empty { margin: 9px 0 0; color: var(--muted); font-size: 11px; }
+    .play-button { flex: 0 0 auto; min-height: 36px; align-self: end; padding: 0 11px; border: 1px solid var(--line); background: #fff; color: var(--ink); font-size: 11px; font-weight: 700; }
+    .play-button:hover:not(:disabled) { border-color: var(--green); background: var(--green-soft); }
     .stage { min-height: 430px; overflow: auto; background-color: #fbfcf8; background-image: linear-gradient(#eaf0e8 1px, transparent 1px), linear-gradient(90deg, #eaf0e8 1px, transparent 1px); background-size: 28px 28px; }
     .empty-state { display: grid; min-height: 430px; place-content: center; padding: 28px; color: var(--muted); text-align: center; }
     .empty-symbol { margin-bottom: 13px; color: #80a18f; font-family: Georgia, serif; font-size: 52px; line-height: 1; }
@@ -88,6 +112,8 @@
     .branch { fill: none; stroke: #9bb4a5; stroke-width: 2; }
     .node-circle { fill: var(--green); stroke: #fffefa; stroke-width: 4; }
     .node-circle.last { fill: var(--orange); animation: pop .35s ease both; }
+    .node-circle.traversal-visited { fill: #68aeb8; }
+    .node-circle.traversal-current { fill: var(--orange); stroke: #f3c5b4; stroke-width: 7; }
     .node-value { fill: white; font-family: Georgia, "Microsoft JhengHei", serif; font-weight: 700; text-anchor: middle; dominant-baseline: central; }
     .node-count { fill: var(--ink); font-family: "Microsoft JhengHei", sans-serif; font-size: 10px; font-weight: 700; text-anchor: middle; }
     .status-line { min-height: 44px; display: flex; align-items: center; gap: 8px; padding: 11px 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
@@ -117,6 +143,13 @@
       .controls { display: block; padding: 17px; }
       .divider { display: block; margin: 17px 0; }
       .tree-head { align-items: flex-start; padding: 15px; }
+      .traversal-tools { padding: 13px 15px; }
+      .traversal-top { align-items: flex-start; flex-direction: column; gap: 8px; }
+      .mode-switch { width: 100%; }
+      .mode-button { flex: 1; padding: 0 6px; }
+      .traversal-output { gap: 9px; }
+      .sequence-heading { flex-wrap: wrap; gap: 4px 8px; }
+      .play-button { padding: 0 8px; }
       .stats { gap: 11px; }
       .stat { font-size: 9px; }
       .stat strong { font-size: 17px; }
@@ -189,6 +222,24 @@
             <div class="stat"><strong id="heightCount">0</strong>層</div>
           </div>
         </header>
+        <section class="traversal-tools" aria-label="樹狀圖走訪模式">
+          <div class="traversal-top">
+            <span class="traversal-label">走訪模式</span>
+            <div class="mode-switch" role="radiogroup" aria-label="選擇走訪順序">
+              <button class="mode-button" type="button" role="radio" aria-checked="true" data-mode="preorder">前序</button>
+              <button class="mode-button" type="button" role="radio" aria-checked="false" data-mode="inorder">中序</button>
+              <button class="mode-button" type="button" role="radio" aria-checked="false" data-mode="postorder">後序</button>
+            </div>
+          </div>
+          <div class="traversal-output">
+            <div class="traversal-sequence">
+              <div class="sequence-heading"><strong>走訪順序</strong><span class="sequence-description" id="sequenceDescription">根 → 左子樹 → 右子樹</span></div>
+              <p class="sequence-empty" id="sequenceEmpty">建立分類樹後，這裡會列出節點順序。</p>
+              <ol class="sequence-list" id="sequenceList" aria-label="節點走訪順序"></ol>
+            </div>
+            <button class="play-button" id="playButton" type="button" title="依順序播放節點" disabled>▶ 播放走訪</button>
+          </div>
+        </section>
         <div class="stage" id="treeStage">
           <div class="empty-state" id="emptyState"><div class="empty-symbol" aria-hidden="true">⑂</div><strong>樹還是空的</strong><span>輸入幾個數字，從第一個根節點開始。</span></div>
         </div>
@@ -209,11 +260,25 @@
     const treeStage = document.querySelector("#treeStage");
     const emptyState = document.querySelector("#emptyState");
     const statusText = document.querySelector("#statusText");
+    const sequenceList = document.querySelector("#sequenceList");
+    const sequenceEmpty = document.querySelector("#sequenceEmpty");
+    const playButton = document.querySelector("#playButton");
+    const modeButtons = [...document.querySelectorAll(".mode-button")];
+    const TRAVERSAL_MODES = {
+      preorder: { label: "前序", description: "根 → 左子樹 → 右子樹" },
+      inorder: { label: "中序", description: "左子樹 → 根 → 右子樹" },
+      postorder: { label: "後序", description: "左子樹 → 右子樹 → 根" }
+    };
     let root = null;
     let lastInserted = null;
     let operationId = 0;
     let nodeSequence = 0;
     let isBusy = false;
+    let traversalMode = "preorder";
+    let traversalOrder = [];
+    let traversalStep = -1;
+    let traversalPlaybackId = 0;
+    let isPlayingTraversal = false;
 
     function parseSequence(text) {
       const tokens = text.trim().split(/[\s,，、;；]+/).filter(Boolean);
@@ -264,6 +329,60 @@
       return node ? 1 + Math.max(treeHeight(node.left), treeHeight(node.right)) : 0;
     }
 
+    function collectTraversal(node, nodes) {
+      if (!node) return;
+      if (traversalMode === "preorder") nodes.push(node);
+      collectTraversal(node.left, nodes);
+      if (traversalMode === "inorder") nodes.push(node);
+      collectTraversal(node.right, nodes);
+      if (traversalMode === "postorder") nodes.push(node);
+    }
+
+    function updateTraversalOutput() {
+      const mode = TRAVERSAL_MODES[traversalMode];
+      document.querySelector("#sequenceDescription").textContent = mode.description;
+      modeButtons.forEach(button => button.setAttribute("aria-checked", String(button.dataset.mode === traversalMode)));
+      sequenceList.replaceChildren();
+      traversalOrder.forEach((node, index) => {
+        const item = document.createElement("li");
+        item.dataset.nodeId = String(node.id);
+        item.dataset.index = String(index);
+        const number = document.createElement("span");
+        number.className = "sequence-index";
+        number.textContent = String(index + 1).padStart(2, "0");
+        const value = document.createElement("span");
+        value.className = "sequence-value";
+        value.textContent = String(node.value);
+        item.append(number, value);
+        if (node.count > 1) {
+          const count = document.createElement("span");
+          count.className = "sequence-count";
+          count.textContent = `× ${node.count}`;
+          item.appendChild(count);
+        }
+        sequenceList.appendChild(item);
+      });
+      sequenceEmpty.hidden = traversalOrder.length > 0;
+      playButton.disabled = isBusy || traversalOrder.length === 0 || isPlayingTraversal;
+      playButton.textContent = traversalStep === traversalOrder.length - 1 && traversalOrder.length > 0 ? "↻ 重新播放" : "▶ 播放走訪";
+      updateTraversalHighlights();
+    }
+
+    function updateTraversalHighlights() {
+      sequenceList.querySelectorAll("li").forEach(item => {
+        const index = Number(item.dataset.index);
+        item.classList.toggle("visited", traversalStep > index);
+        item.classList.toggle("current", traversalStep === index);
+      });
+      const treeSvg = document.querySelector("#treeSvg");
+      if (!treeSvg) return;
+      treeSvg.querySelectorAll(".node-circle").forEach(circle => {
+        const index = traversalOrder.findIndex(node => String(node.id) === circle.dataset.nodeId);
+        circle.classList.toggle("traversal-visited", index >= 0 && traversalStep > index);
+        circle.classList.toggle("traversal-current", index >= 0 && traversalStep === index);
+      });
+    }
+
     function createSvgElement(name, attributes = {}) {
       const element = document.createElementNS(SVG_NS, name);
       for (const [key, value] of Object.entries(attributes)) element.setAttribute(key, String(value));
@@ -277,10 +396,14 @@
         document.querySelector("#heightCount").textContent = "0";
         appendButton.disabled = true;
         clearButton.disabled = true;
+        traversalOrder = [];
+        updateTraversalOutput();
         return;
       }
       const entries = [];
       collectNodes(root, 0, entries);
+      traversalOrder = [];
+      collectTraversal(root, traversalOrder);
       const gapX = 108;
       const gapY = 102;
       const marginX = 62;
@@ -322,6 +445,7 @@
         const group = createSvgElement("g", { "aria-label": `${node.value}${node.count > 1 ? `，${node.count} 次` : ""}` });
         group.appendChild(createSvgElement("circle", {
           class: `node-circle${node === lastInserted ? " last" : ""}`,
+          "data-node-id": node.id,
           cx: x,
           cy: y,
           r: 25
@@ -346,6 +470,7 @@
       document.querySelector("#heightCount").textContent = String(treeHeight(root));
       appendButton.disabled = isBusy;
       clearButton.disabled = isBusy;
+      updateTraversalOutput();
     }
 
     function describeInsertion(value, result) {
@@ -360,6 +485,34 @@
       document.querySelector("#sampleButton").disabled = busy;
       appendButton.disabled = busy || !root;
       clearButton.disabled = busy || !root;
+      modeButtons.forEach(button => button.disabled = busy);
+      playButton.disabled = busy || traversalOrder.length === 0 || isPlayingTraversal;
+    }
+
+    function cancelTraversalPlayback() {
+      traversalPlaybackId += 1;
+      isPlayingTraversal = false;
+      traversalStep = -1;
+    }
+
+    async function playTraversal() {
+      if (!traversalOrder.length || isPlayingTraversal) return;
+      const playbackId = ++traversalPlaybackId;
+      isPlayingTraversal = true;
+      traversalStep = -1;
+      updateTraversalOutput();
+      for (let index = 0; index < traversalOrder.length; index += 1) {
+        if (playbackId !== traversalPlaybackId) return;
+        traversalStep = index;
+        updateTraversalHighlights();
+        const node = traversalOrder[index];
+        statusText.textContent = `${TRAVERSAL_MODES[traversalMode].label}走訪：第 ${index + 1} 個節點是 ${node.value}。`;
+        await wait(600);
+      }
+      if (playbackId !== traversalPlaybackId) return;
+      isPlayingTraversal = false;
+      updateTraversalOutput();
+      statusText.textContent = `${TRAVERSAL_MODES[traversalMode].label}走訪完成，共 ${traversalOrder.length} 個節點。`;
     }
 
     function wait(milliseconds) {
@@ -367,6 +520,7 @@
     }
 
     async function buildTree(values) {
+      cancelTraversalPlayback();
       const thisOperation = ++operationId;
       root = null;
       lastInserted = null;
@@ -387,6 +541,7 @@
     }
 
     function addSingleValue(value) {
+      cancelTraversalPlayback();
       const result = insertValue(value);
       lastInserted = result.node;
       renderTree();
@@ -410,6 +565,19 @@
       buildTree(SAMPLE_VALUES);
     });
 
+    document.querySelector(".mode-switch").addEventListener("click", event => {
+      const button = event.target.closest("button[data-mode]");
+      if (!button || button.dataset.mode === traversalMode) return;
+      cancelTraversalPlayback();
+      traversalMode = button.dataset.mode;
+      renderTree();
+      statusText.textContent = root
+        ? `已切換為${TRAVERSAL_MODES[traversalMode].label}走訪。`
+        : "先建立分類樹，即可查看節點走訪順序。";
+    });
+
+    playButton.addEventListener("click", playTraversal);
+
     appendButton.addEventListener("click", () => {
       const value = appendInput.valueAsNumber;
       if (!Number.isFinite(value)) {
@@ -429,6 +597,7 @@
 
     clearButton.addEventListener("click", () => {
       operationId += 1;
+      cancelTraversalPlayback();
       root = null;
       lastInserted = null;
       nodeSequence = 0;
