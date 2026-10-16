@@ -31,6 +31,7 @@ jobs:
           cp index.html _site/index.html
           cp tree.html _site/tree.html
           cp max_heap.html _site/max_heap.html
+          cp hash_table.html _site/hash_table.html
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
         with:
