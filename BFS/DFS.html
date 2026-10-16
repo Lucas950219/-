@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#173d35">
+  <title>BFS / DFS｜圖形搜尋互動展示</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #18332e;
+      --muted: #718078;
+      --paper: #f4f4ed;
+      --surface: #fffefa;
+      --line: #dce3da;
+      --green: #1d5949;
+      --green-dark: #173d35;
+      --green-soft: #e5f1e9;
+      --coral: #d96d56;
+      --coral-soft: #f9ebe6;
+      --yellow: #f2cf72;
+      --blue: #4f7882;
+      --shadow: 0 14px 36px rgba(28, 57, 47, .07);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      min-height: 100vh;
+      color: var(--ink);
+      background-color: var(--paper);
+      background-image: radial-gradient(#dce4d9 0.7px, transparent 0.7px);
+      background-size: 18px 18px;
+      font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+    }
+    button, select { font: inherit; }
+    button { cursor: pointer; }
+    .topbar { color: white; background: var(--green-dark); border-bottom: 4px solid var(--yellow); }
+    .topbar-inner, main { width: min(1180px, calc(100% - 40px)); margin: 0 auto; }
+    .topbar-inner { min-height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .brand { display: flex; align-items: center; gap: 11px; }
+    .brand-mark { display: grid; place-items: center; width: 34px; aspect-ratio: 1; border: 1px solid rgba(255,255,255,.45); border-radius: 4px; color: var(--yellow); font-family: Georgia, serif; font-weight: 700; }
+    .brand-title { font-size: 14px; font-weight: 800; }
+    .brand-caption { margin-top: 2px; color: #c4d8ce; font-size: 11px; }
+    .top-links { display: flex; flex-wrap: wrap; gap: 16px; }
+    .top-links a { color: #e2eee7; font-size: 12px; text-decoration: none; }
+    .top-links a:hover { color: var(--yellow); }
+    main { padding: 30px 0 48px; }
+    .intro { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 20px; }
+    h1 { margin: 0; font-family: Georgia, "Noto Serif TC", "Microsoft JhengHei", serif; font-size: 32px; line-height: 1.2; }
+    .intro p { margin: 7px 0 0; color: var(--muted); font-size: 14px; }
+    .badge { padding: 8px 11px; border: 1px solid #cce3d3; border-radius: 4px; background: #f2faf3; color: #286849; font-size: 12px; font-weight: 700; white-space: nowrap; }
+    .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-bottom: 18px; border: 1px solid var(--line); border-radius: 5px; background: var(--surface); box-shadow: var(--shadow); }
+    .stat { min-width: 0; padding: 12px 17px; }
+    .stat + .stat { border-left: 1px solid var(--line); }
+    .stat-label { color: var(--muted); font-size: 11px; }
+    .stat-value { margin-top: 3px; font-size: 18px; font-weight: 800; overflow-wrap: anywhere; }
+    .layout { display: grid; grid-template-columns: minmax(250px, 310px) minmax(0, 1fr); gap: 18px; align-items: start; }
+    .panel { min-width: 0; border: 1px solid var(--line); border-radius: 5px; background: var(--surface); box-shadow: var(--shadow); }
+    .controls { padding: 19px; }
+    .section-title { margin: 0; font-size: 14px; font-weight: 800; }
+    .section-note { margin: 5px 0 0; color: var(--muted); font-size: 12px; line-height: 1.55; }
+    .control-group { padding: 17px 0; border-bottom: 1px solid var(--line); }
+    .control-group:last-of-type { padding-bottom: 0; border-bottom: 0; }
+    label { display: block; margin-bottom: 7px; font-size: 12px; font-weight: 700; }
+    select { width: 100%; height: 40px; padding: 0 10px; border: 1px solid #cbd6cc; border-radius: 4px; background: white; color: var(--ink); }
+    select:focus-visible, button:focus-visible, a:focus-visible { outline: 3px solid rgba(29,89,73,.35); outline-offset: 2px; }
+    .algorithm-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+    .primary, .secondary, .algorithm-button, .step-button { min-height: 40px; padding: 0 12px; border: 1px solid transparent; border-radius: 4px; font-size: 12px; font-weight: 800; white-space: nowrap; transition: background-color .16s ease, transform .16s ease; }
+    .primary { background: var(--green); color: white; }
+    .primary:hover { background: #174839; }
+    .secondary, .algorithm-button { border-color: #cbd6cc; background: white; color: var(--ink); }
+    .secondary:hover, .algorithm-button:hover { background: #f0f4ef; }
+    .algorithm-button[aria-pressed="true"] { border-color: var(--green); background: var(--green-soft); color: #245641; }
+    .primary:active, .secondary:active, .algorithm-button:active, .step-button:active { transform: translateY(1px); }
+    button:disabled { cursor: not-allowed; opacity: .45; transform: none; }
+    .full { width: 100%; margin-top: 8px; }
+    .helper { margin: 7px 0 0; color: var(--muted); font-size: 11px; line-height: 1.5; }
+    .edge-list { margin: 8px 0 0; color: #435d50; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12px; line-height: 1.9; }
+    .visual { overflow: hidden; }
+    .visual-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 18px 13px; border-bottom: 1px solid var(--line); }
+    .visual-head h2, .process-head h2 { margin: 0; font-size: 14px; }
+    .visual-head p { margin: 4px 0 0; color: var(--muted); font-size: 11px; }
+    .legend { display: flex; flex-wrap: wrap; gap: 10px; color: var(--muted); font-size: 11px; }
+    .legend span { display: inline-flex; align-items: center; gap: 5px; }
+    .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #fff; border: 1px solid #91a4ae; }
+    .legend .visited-key { background: var(--green-soft); border-color: var(--green); }
+    .legend .current-key { background: var(--coral); border-color: var(--coral); }
+    .graph-wrap { padding: 8px 12px 0; background: #e5ebf0; }
+    svg { display: block; width: 100%; max-height: 410px; }
+    .edge { stroke: #c3ced6; stroke-width: 2.4; transition: stroke .2s ease, stroke-width .2s ease; }
+    .edge.traversed { stroke: var(--green); stroke-width: 3.6; }
+    .edge.active { stroke: var(--coral); stroke-width: 4.5; }
+    .node circle { fill: white; stroke: #8da1af; stroke-width: 2; transition: fill .2s ease, stroke .2s ease; }
+    .node.visited circle { fill: var(--green-soft); stroke: var(--green); }
+    .node.frontier circle { fill: #edf3f5; stroke: var(--blue); stroke-dasharray: 4 3; }
+    .node.current circle { fill: var(--coral); stroke: #ad533f; }
+    .node-label { fill: #243a40; font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif; font-size: 16px; font-weight: 800; text-anchor: middle; dominant-baseline: central; }
+    .node.current .node-label { fill: white; }
+    .node-degree { fill: #167368; font-size: 12px; font-weight: 700; text-anchor: middle; }
+    .node-name { fill: #85939a; font-size: 12px; text-anchor: middle; }
+    .process { margin-top: 18px; padding: 17px 19px; }
+    .process-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+    .step-count { color: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+    .process-content { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 76px; padding-top: 13px; }
+    .step-detail { min-width: 0; font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
+    .step-nav { display: flex; flex: 0 0 auto; gap: 7px; }
+    .step-button { min-height: 38px; border-color: #cbd6cc; background: white; color: var(--ink); }
+    .step-button:hover:not(:disabled) { background: #f0f4ef; }
+    .frontier-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+    .frontier-box { min-width: 0; padding: 12px; border: 1px solid #e1e7df; border-radius: 4px; background: #fbfcf8; }
+    .frontier-label { color: var(--muted); font-size: 11px; }
+    .frontier-value { margin-top: 5px; min-height: 24px; color: #245641; font-size: 13px; font-weight: 800; overflow-wrap: anywhere; }
+    .explanation { margin-top: 18px; padding: 17px 19px; }
+    .explanation h2 { margin: 0; font-size: 14px; }
+    .explanation p { margin: 8px 0 0; color: #435d50; font-size: 12px; line-height: 1.7; }
+    .explanation strong { color: var(--green); }
+    @media (max-width: 760px) {
+      .layout { grid-template-columns: 1fr; }
+      .intro { align-items: start; flex-direction: column; }
+      .process-content { align-items: stretch; flex-direction: column; }
+      .step-nav { justify-content: flex-end; }
+    }
+    @media (max-width: 480px) {
+      .topbar-inner, main { width: min(100% - 24px, 1180px); }
+      .topbar-inner { align-items: flex-start; flex-direction: column; justify-content: center; padding: 12px 0; }
+      h1 { font-size: 27px; }
+      .stats { grid-template-columns: 1fr; }
+      .stat + .stat { border-top: 1px solid var(--line); border-left: 0; }
+      .visual-head { align-items: flex-start; flex-direction: column; }
+      .frontier-panel { grid-template-columns: 1fr; }
+      .graph-wrap { padding-right: 2px; padding-left: 2px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">G</div>
+        <div><div class="brand-title">資料結構互動實驗室</div><div class="brand-caption">GRAPH SEARCH VISUALIZER</div></div>
+      </div>
+      <nav class="top-links" aria-label="其他展示">
+        <a href="../index.html">回首頁</a>
+        <a href="../max_heap.html">Max-Heap</a>
+        <a href="../hash_table.html">Hash Table</a>
+        <a href="../tree.html">數字分類樹</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="intro" aria-labelledby="page-title">
+      <div>
+        <h1 id="page-title">BFS / DFS 圖形搜尋</h1>
+        <p>用同一張無向圖，逐步觀察廣度優先搜尋與深度優先搜尋。</p>
+      </div>
+      <div class="badge">6 個節點 · 9 條邊</div>
+    </section>
+
+    <section class="stats" aria-label="搜尋狀態">
+      <div class="stat"><div class="stat-label">搜尋方式</div><div class="stat-value" id="algorithm-label">BFS 廣度優先</div></div>
+      <div class="stat"><div class="stat-label">目前節點</div><div class="stat-value" id="current-label">尚未開始</div></div>
+      <div class="stat"><div class="stat-label">拜訪順序</div><div class="stat-value" id="order-label">—</div></div>
+    </section>
+
+    <div class="layout">
+      <aside class="panel controls" aria-labelledby="controls-title">
+        <h2 class="section-title" id="controls-title">搜尋設定</h2>
+        <p class="section-note">選擇演算法與起點，再按下一步開始。</p>
+        <div class="control-group">
+          <label>搜尋演算法</label>
+          <div class="algorithm-switch" role="group" aria-label="搜尋演算法">
+            <button class="algorithm-button" id="bfs-button" type="button" aria-pressed="true">BFS 廣度</button>
+            <button class="algorithm-button" id="dfs-button" type="button" aria-pressed="false">DFS 深度</button>
+          </div>
+        </div>
+        <div class="control-group">
+          <label for="start-select">起始節點</label>
+          <select id="start-select">
+            <option value="a">A｜校門</option>
+            <option value="b">B｜圖書館</option>
+            <option value="c">C｜餐廳</option>
+            <option value="d">D｜系館</option>
+            <option value="e">E｜宿舍</option>
+            <option value="f">F｜體育館</option>
+          </select>
+          <p class="helper">相鄰節點依 A → F 的字母順序檢查。</p>
+        </div>
+        <div class="control-group">
+          <div class="section-title">圖形的邊</div>
+          <p class="edge-list">(A-B) (A-C) (B-C)<br>(B-D) (C-D) (C-E)<br>(D-E) (D-F) (E-F)</p>
+        </div>
+        <div class="control-group">
+          <button class="primary full" id="next-button" type="button">下一步 →</button>
+          <button class="secondary full" id="play-button" type="button">▶ 自動播放</button>
+          <button class="secondary full" id="reset-button" type="button">重新開始</button>
+          <p class="helper">每按一次「下一步」就執行一個搜尋動作，可用上一步回看。</p>
+        </div>
+      </aside>
+
+      <div>
+        <section class="panel visual" aria-labelledby="graph-title">
+          <div class="visual-head">
+            <div><h2 id="graph-title">無向圖</h2><p>橘色為目前節點／正在檢查的邊，綠色為已走過的邊。</p></div>
+            <div class="legend" aria-label="圖例">
+              <span><i></i>未拜訪</span><span><i class="visited-key"></i>已拜訪</span><span><i class="current-key"></i>目前</span>
+            </div>
+          </div>
+          <div class="graph-wrap">
+            <svg viewBox="0 0 600 350" role="img" aria-labelledby="graph-title graph-description">
+              <desc id="graph-description">包含 A 到 F 六個節點的無向圖。邊為 AB、AC、BC、BD、CD、CE、DE、DF、EF。</desc>
+              <g aria-hidden="true">
+                <line class="edge" data-edge="a-b" x1="90" y1="170" x2="230" y2="65"/>
+                <line class="edge" data-edge="a-c" x1="90" y1="170" x2="230" y2="275"/>
+                <line class="edge" data-edge="b-c" x1="230" y1="65" x2="230" y2="275"/>
+                <line class="edge" data-edge="b-d" x1="230" y1="65" x2="390" y2="65"/>
+                <line class="edge" data-edge="c-d" x1="230" y1="275" x2="390" y2="65"/>
+                <line class="edge" data-edge="c-e" x1="230" y1="275" x2="390" y2="275"/>
+                <line class="edge" data-edge="d-e" x1="390" y1="65" x2="390" y2="275"/>
+                <line class="edge" data-edge="d-f" x1="390" y1="65" x2="530" y2="170"/>
+                <line class="edge" data-edge="e-f" x1="390" y1="275" x2="530" y2="170"/>
+              </g>
+              <g class="node" data-node="a" transform="translate(90 170)">
+                <text class="node-degree" y="-34">deg 2</text><circle r="25"/><text class="node-label">A</text><text class="node-name" y="43">校門</text>
+              </g>
+              <g class="node" data-node="b" transform="translate(230 65)">
+                <text class="node-degree" y="-34">deg 3</text><circle r="25"/><text class="node-label">B</text><text class="node-name" y="43">圖書館</text>
+              </g>
+              <g class="node" data-node="c" transform="translate(230 275)">
+                <circle r="25"/><text class="node-label">C</text><text class="node-name" y="43">餐廳</text><text class="node-degree" y="60">deg 4</text>
+              </g>
+              <g class="node" data-node="d" transform="translate(390 65)">
+                <text class="node-degree" y="-34">deg 4</text><circle r="25"/><text class="node-label">D</text><text class="node-name" y="43">系館</text>
+              </g>
+              <g class="node" data-node="e" transform="translate(390 275)">
+                <circle r="25"/><text class="node-label">E</text><text class="node-name" y="43">宿舍</text><text class="node-degree" y="60">deg 3</text>
+              </g>
+              <g class="node" data-node="f" transform="translate(530 170)">
+                <text class="node-degree" y="-34">deg 2</text><circle r="25"/><text class="node-label">F</text><text class="node-name" y="43">體育館</text>
+              </g>
+            </svg>
+          </div>
+        </section>
+        <section class="panel process" aria-labelledby="process-title">
+          <div class="process-head">
+            <h2 id="process-title">搜尋過程</h2>
+            <span class="step-count" id="step-count" aria-live="polite">尚未開始</span>
+          </div>
+          <div class="process-content">
+            <div class="step-detail" id="step-detail" aria-live="polite">起點是 A。按「下一步」開始 BFS；每次只執行一個動作。</div>
+            <div class="step-nav">
+              <button class="step-button" id="previous-button" type="button" disabled>← 上一步</button>
+              <button class="step-button" id="step-next-button" type="button">下一步 →</button>
+            </div>
+          </div>
+          <div class="frontier-panel">
+            <div class="frontier-box"><div class="frontier-label" id="frontier-label">佇列（Queue）</div><div class="frontier-value" id="frontier-value">—</div></div>
+            <div class="frontier-box"><div class="frontier-label">已拜訪順序</div><div class="frontier-value" id="visited-value">—</div></div>
+          </div>
+        </section>
+        <section class="panel explanation" aria-labelledby="explanation-title">
+          <h2 id="explanation-title">兩種搜尋方式</h2>
+          <p><strong>BFS（廣度優先）</strong>使用佇列，先拜訪離起點近的節點，再往外擴展。<strong>DFS（深度優先）</strong>沿著一條路徑盡量往深處走，走到底再回溯。這張無向圖會在遇到已拜訪的鄰居時略過，避免繞圈。</p>
+        </section>
+      </div>
+    </div>
+  </main>
+  <script>
+    const nodes = ["a", "b", "c", "d", "e", "f"];
+    const names = { a: "A（校門）", b: "B（圖書館）", c: "C（餐廳）", d: "D（系館）", e: "E（宿舍）", f: "F（體育館）" };
+    const adjacency = {
+      a: ["b", "c"],
+      b: ["a", "c", "d"],
+      c: ["a", "b", "d", "e"],
+      d: ["b", "c", "e", "f"],
+      e: ["c", "d", "f"],
+      f: ["d", "e"]
+    };
+    const elements = {
+      algorithmLabel: document.querySelector("#algorithm-label"),
+      currentLabel: document.querySelector("#current-label"),
+      orderLabel: document.querySelector("#order-label"),
+      stepCount: document.querySelector("#step-count"),
+      stepDetail: document.querySelector("#step-detail"),
+      frontierLabel: document.querySelector("#frontier-label"),
+      frontierValue: document.querySelector("#frontier-value"),
+      visitedValue: document.querySelector("#visited-value"),
+      start: document.querySelector("#start-select"),
+      previous: document.querySelector("#previous-button"),
+      next: document.querySelector("#next-button"),
+      stepNext: document.querySelector("#step-next-button"),
+      play: document.querySelector("#play-button"),
+      bfs: document.querySelector("#bfs-button"),
+      dfs: document.querySelector("#dfs-button")
+    };
+    let algorithm = "bfs";
+    let steps = [];
+    let stepIndex = -1;
+    let timer = null;
+
+    function edgeKey(from, to) {
+      return [from, to].sort().join("-");
+    }
+
+    function snapshot(state, message) {
+      steps.push({
+        visited: [...state.visited],
+        frontier: [...state.frontier],
+        current: state.current,
+        activeEdge: state.activeEdge,
+        traversedEdges: [...state.traversedEdges],
+        message
+      });
+    }
+
+    function buildSteps() {
+      steps = [];
+      stepIndex = -1;
+      const start = elements.start.value;
+      const state = { visited: [], frontier: [], current: null, activeEdge: null, traversedEdges: [] };
+      const discovered = new Set([start]);
+      state.visited.push(start);
+      state.frontier.push(start);
+      snapshot(state, `從 ${names[start]} 開始搜尋，並標記為已拜訪。`);
+
+      if (algorithm === "bfs") {
+        while (state.frontier.length) {
+          const current = state.frontier.shift();
+          state.current = current;
+          state.activeEdge = null;
+          snapshot(state, `從佇列取出 ${names[current]}，開始檢查它的相鄰節點。`);
+          for (const neighbor of adjacency[current]) {
+            state.activeEdge = edgeKey(current, neighbor);
+            if (discovered.has(neighbor)) {
+              snapshot(state, `檢查邊 ${current.toUpperCase()}-${neighbor.toUpperCase()}：${names[neighbor]} 已拜訪，略過。`);
+              continue;
+            }
+            discovered.add(neighbor);
+            state.visited.push(neighbor);
+            state.frontier.push(neighbor);
+            state.traversedEdges.push(state.activeEdge);
+            snapshot(state, `檢查邊 ${current.toUpperCase()}-${neighbor.toUpperCase()}：發現 ${names[neighbor]}，加入佇列。`);
+          }
+        }
+      } else {
+        function visit(current) {
+          state.current = current;
+          if (state.frontier[state.frontier.length - 1] !== current) state.frontier.push(current);
+          state.activeEdge = null;
+          snapshot(state, `走到 ${names[current]}，沿著這條路徑繼續深入。`);
+          for (const neighbor of adjacency[current]) {
+            state.activeEdge = edgeKey(current, neighbor);
+            if (discovered.has(neighbor)) {
+              snapshot(state, `檢查邊 ${current.toUpperCase()}-${neighbor.toUpperCase()}：${names[neighbor]} 已拜訪，略過。`);
+              continue;
+            }
+            discovered.add(neighbor);
+            state.visited.push(neighbor);
+            state.traversedEdges.push(state.activeEdge);
+            snapshot(state, `發現 ${names[neighbor]}，沿著邊 ${current.toUpperCase()}-${neighbor.toUpperCase()} 繼續深入。`);
+            visit(neighbor);
+          }
+          state.frontier.pop();
+          state.current = state.frontier.length ? state.frontier[state.frontier.length - 1] : current;
+          state.activeEdge = null;
+          snapshot(state, state.frontier.length
+            ? `${names[current]} 的相鄰節點都處理完畢，回溯到 ${names[state.current]}。`
+            : `${names[current]} 的相鄰節點都處理完畢，搜尋結束。`);
+        }
+        visit(start);
+      }
+
+      state.current = null;
+      state.activeEdge = null;
+      snapshot(state, `所有節點都已探索完成。${algorithm === "bfs" ? "BFS" : "DFS"} 拜訪順序：${state.visited.map(node => node.toUpperCase()).join(" → ")}。`);
+      render();
+    }
+
+    function currentState() {
+      if (stepIndex < 0) {
+        return { visited: [], frontier: [], current: null, activeEdge: null, traversedEdges: [], message: `起點是 ${names[elements.start.value]}。按「下一步」開始 ${algorithm.toUpperCase()}；每次只執行一個動作。` };
+      }
+      return steps[stepIndex];
+    }
+
+    function render() {
+      const state = currentState();
+      const algorithmName = algorithm === "bfs" ? "BFS 廣度優先" : "DFS 深度優先";
+      elements.algorithmLabel.textContent = algorithmName;
+      elements.currentLabel.textContent = state.current ? state.current.toUpperCase() : (stepIndex < 0 ? "尚未開始" : "完成");
+      elements.orderLabel.textContent = state.visited.length ? state.visited.map(node => node.toUpperCase()).join(" → ") : "—";
+      elements.stepCount.textContent = steps.length ? (stepIndex < 0 ? `開始前 / 共 ${steps.length} 步` : `步驟 ${stepIndex + 1} / ${steps.length}`) : "尚未開始";
+      elements.stepDetail.textContent = state.message;
+      elements.frontierLabel.textContent = algorithm === "bfs" ? "佇列（Queue）" : "呼叫堆疊（Stack）";
+      elements.frontierValue.textContent = state.frontier.length ? state.frontier.map(node => node.toUpperCase()).join(" → ") : "—";
+      elements.visitedValue.textContent = state.visited.length ? state.visited.map(node => node.toUpperCase()).join(" → ") : "—";
+
+      document.querySelectorAll(".node").forEach(nodeElement => {
+        const node = nodeElement.dataset.node;
+        nodeElement.classList.toggle("visited", state.visited.includes(node));
+        nodeElement.classList.toggle("frontier", state.frontier.includes(node) && node !== state.current);
+        nodeElement.classList.toggle("current", node === state.current);
+      });
+      document.querySelectorAll(".edge").forEach(edgeElement => {
+        const edge = edgeElement.dataset.edge;
+        edgeElement.classList.toggle("traversed", state.traversedEdges.includes(edge));
+        edgeElement.classList.toggle("active", edge === state.activeEdge);
+      });
+
+      const atEnd = stepIndex >= steps.length - 1;
+      elements.previous.disabled = stepIndex < 0;
+      elements.next.disabled = atEnd;
+      elements.stepNext.disabled = atEnd;
+      elements.play.disabled = atEnd;
+      elements.play.textContent = timer ? "⏸ 暫停播放" : "▶ 自動播放";
+      elements.bfs.setAttribute("aria-pressed", String(algorithm === "bfs"));
+      elements.dfs.setAttribute("aria-pressed", String(algorithm === "dfs"));
+    }
+
+    function stopPlayback() {
+      if (timer) {
+        window.clearInterval(timer);
+        timer = null;
+      }
+      render();
+    }
+
+    function advance() {
+      if (stepIndex < steps.length - 1) {
+        stepIndex += 1;
+        render();
+      }
+      if (stepIndex >= steps.length - 1) stopPlayback();
+    }
+
+    function restart() {
+      stopPlayback();
+      buildSteps();
+    }
+
+    elements.bfs.addEventListener("click", () => { algorithm = "bfs"; restart(); });
+    elements.dfs.addEventListener("click", () => { algorithm = "dfs"; restart(); });
+    elements.start.addEventListener("change", restart);
+    elements.next.addEventListener("click", advance);
+    elements.stepNext.addEventListener("click", advance);
+    elements.previous.addEventListener("click", () => {
+      stopPlayback();
+      stepIndex = Math.max(-1, stepIndex - 1);
+      render();
+    });
+    document.querySelector("#reset-button").addEventListener("click", restart);
+    elements.play.addEventListener("click", () => {
+      if (timer) {
+        stopPlayback();
+      } else {
+        if (stepIndex >= steps.length - 1) stepIndex = -1;
+        timer = window.setInterval(advance, 900);
+        advance();
+      }
+    });
+
+    buildSteps();
+  </script>
+</body>
+</html>
