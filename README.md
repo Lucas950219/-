@@ -6,7 +6,7 @@
 2. 到 repository 的 **Settings → Pages**，將 **Build and deployment → Source** 設為 **GitHub Actions**。
 3. 推送變更後，至 **Actions** 確認 `Deploy static site to GitHub Pages` 完成；部署網址會顯示在 workflow 執行結果中。
 
-部署流程只會將 `index.html` 放入 Pages 網站，不會發布其他專案檔案。`.gitignore` 會排除本機的 `credentials.json`。
+部署流程會將 `index.html`、`tree.html` 和 `max_heap.html` 放入 Pages 網站，不會發布其他專案檔案。最大堆積互動展示網址為 `https://lucas950219.github.io/-/max_heap.html`。`.gitignore` 會排除本機的 `credentials.json`。
 
 ## 資料儲存
 
