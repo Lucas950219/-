@@ -32,8 +32,7 @@ jobs:
           cp tree.html _site/tree.html
           cp max_heap.html _site/max_heap.html
           cp hash_table.html _site/hash_table.html
-          mkdir -p _site/BFS
-          cp BFS/DFS.html _site/BFS/DFS.html
+          cp BFS_DFS.html _site/BFS_DFS.html
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
         with:

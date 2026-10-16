@@ -6,7 +6,7 @@
 2. 到 repository 的 **Settings → Pages**，將 **Build and deployment → Source** 設為 **GitHub Actions**。
 3. 推送變更後，至 **Actions** 確認 `Deploy static site to GitHub Pages` 完成；部署網址會顯示在 workflow 執行結果中。
 
-部署流程會將 `index.html`、`tree.html`、`max_heap.html`、`hash_table.html` 和 `BFS/DFS.html` 放入 Pages 網站，不會發布其他專案檔案。最大堆積互動展示網址為 `https://lucas950219.github.io/-/max_heap.html`；雜湊表鏈結法互動展示網址為 `https://lucas950219.github.io/-/hash_table.html`；BFS／DFS 圖形搜尋展示網址為 `https://lucas950219.github.io/-/BFS/DFS.html`。雜湊表使用 13 個桶，可輸入至少 15 個整數，碰撞時以鏈結法處理。`.gitignore` 會排除本機的 `credentials.json`。
+部署流程會將 `index.html`、`tree.html`、`max_heap.html`、`hash_table.html` 和 `BFS_DFS.html` 放入 Pages 網站，不會發布其他專案檔案。最大堆積互動展示網址為 `https://lucas950219.github.io/-/max_heap.html`；雜湊表鏈結法互動展示網址為 `https://lucas950219.github.io/-/hash_table.html`；BFS／DFS 圖形搜尋展示網址為 `https://lucas950219.github.io/-/BFS_DFS.html`。雜湊表使用 13 個桶，可輸入至少 15 個整數，碰撞時以鏈結法處理。`.gitignore` 會排除本機的 `credentials.json`。
 
 ## 資料儲存
 
