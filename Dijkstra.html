@@ -13,9 +13,7 @@
     .top { background:#fff; border:1px solid var(--line); border-radius:0 0 13px 13px; box-shadow:0 3px 10px #10283d12; }
     .top-inner,main { width:min(1140px,calc(100% - 28px)); margin:auto; }
     .top-inner { min-height:54px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
-    .nav { display:flex; align-items:center; gap:7px; overflow:auto; }
-    .nav a { white-space:nowrap; padding:9px 13px; border-radius:20px; color:#506479; background:#e6ebf1; text-decoration:none; font-size:12px; }
-    .nav a.active { color:#7d3706; background:var(--orange-soft); border:1px solid #c6550b; }
+    .brand { color:#314d65; font-size:14px; font-weight:800; }
     .pickers { display:flex; gap:14px; align-items:center; color:#506479; font-size:12px; }
     .pickers label { display:flex; gap:6px; align-items:center; }
     select { padding:6px 9px; border:1px solid #cbd5df; border-radius:6px; color:var(--ink); background:#e3e9ef; }
@@ -67,13 +65,19 @@
     .infinity { color:#9aabba; }
     .status-current { color:#a84b0e; font-weight:800; }
     .status-done { color:#087d78; font-weight:800; }
+    .principles { color:#536a7e; font-size:13px; line-height:1.7; }
+    .principles h2 { margin:0 0 8px; color:#18344b; font-size:14px; }
+    .principles ol { margin:0; padding-left:20px; }
+    .principles li { margin:4px 0; }
+    .principles code { padding:1px 4px; border-radius:4px; color:#8c410e; background:#f9e6d5; font-family:monospace; }
+    .route-summary { margin-top:10px; padding:9px 10px; border-radius:7px; color:#075d59; background:#d9efec; font-weight:800; }
     @media(max-width:800px) { .layout { grid-template-columns:1fr; } .side { display:grid; grid-template-columns:1fr 1fr; align-items:start; } }
     @media(max-width:560px) { .top-inner { align-items:flex-start; flex-direction:column; padding:8px 0; } .pickers { padding:0 8px 2px; } .side { display:flex; } main { padding-top:12px; } .graph-panel { padding:12px 9px; } .controls { flex-wrap:wrap; } .slider { order:2; flex-basis:70%; } }
   </style>
 </head>
 <body>
   <header class="top"><div class="top-inner">
-    <nav class="nav" aria-label="教學頁面"><a class="active" href="./Dijkstra.html">6 點 8 邊 Dijkstra</a><a href="./BFS_DFS.html">BFS / DFS</a><a href="./MST.html">MST</a></nav>
+    <div class="brand">Dijkstra 最短路徑</div>
     <div class="pickers"><label for="start">起點 <select id="start"><option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option><option value="4">E</option><option value="5">F</option></select></label><label for="target">終點 <select id="target"><option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option><option value="4">E</option><option value="5" selected>F</option></select></label></div>
   </div></header>
   <main><div class="layout">
@@ -87,6 +91,7 @@
     <aside class="side">
       <section class="panel"><div class="side-title"><strong>優先佇列（DIST，節點）</strong><span id="queue-count">0 項目</span></div><div id="queue" class="queue"></div><div class="stats"><div class="stat"><small>取出次數</small><b id="pops">0</b></div><div class="stat"><small>過期跳過</small><b id="stale" style="color:#bc342d">0</b></div><div class="stat"><small>鬆弛成功</small><b id="relaxations" style="color:#c65d13">0</b></div><div class="stat"><small>已出堆</small><b id="settled" style="color:#087d78">0</b></div></div></section>
       <section class="panel"><div class="side-title"><strong>DIST / PARENT 表</strong><span id="settled-count">出堆 0 / 6</span></div><div class="table-wrap"><table><thead><tr><th>點</th><th>DIST</th><th>PARENT</th><th>狀態</th></tr></thead><tbody id="rows"></tbody></table></div></section>
+      <section class="panel principles"><h2>Dijkstra 原理</h2><ol><li>起點距離設為 <code>0</code>，其他點設為 <code>∞</code>。</li><li>從優先佇列取出目前距離最小、尚未定案的節點。</li><li>檢查它的鄰邊：若 <code>dist[u] + weight</code> 更小，就更新距離與前一點，並將新距離放入佇列。</li><li>重複直到取出終點。邊權重非負時，取出的最小距離即可定案。</li></ol><div id="route-summary" class="route-summary" aria-live="polite"></div></section>
     </aside>
   </div></main>
   <script>
@@ -156,6 +161,8 @@
       document.getElementById("settled-count").textContent=`出堆 ${s.settled.filter(Boolean).length} / 6`;
       document.getElementById("rows").innerHTML=names.map((name,i)=>`<tr><td>${name}</td><td class="${s.dist[i]===Infinity?'infinity':''}">${s.dist[i]===Infinity?'∞':s.dist[i]}</td><td>${s.parent[i]===-1?'—':names[s.parent[i]]}</td><td class="${s.settled[i]?'status-done':s.current===i?'status-current':''}">${s.settled[i]?'已出堆':s.current===i?'處理中':s.dist[i]===Infinity?'未探索':'排隊中'}</td></tr>`).join("");
       document.getElementById("explain").innerHTML=`<strong>${esc(s.tag)}</strong>${esc(s.message)}<p>${esc(s.detail)}</p>`;
+      const route=pathTo(target,s.parent).map(v=>names[v]).join(" → ");
+      document.getElementById("route-summary").textContent=s.dist[target]===Infinity?`${names[start]} 到 ${names[target]} 尚無可達路徑`:`${s.settled[target]?"最短路徑":"目前最佳路徑"}：${route}（距離 ${s.dist[target]}）`;
       document.getElementById("counter").textContent=`${step} / ${trace.length-1}`;
       document.getElementById("slider").max=trace.length-1; document.getElementById("slider").value=step;
       document.getElementById("prev").disabled=step===0; document.getElementById("next").disabled=step===trace.length-1;
