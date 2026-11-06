@@ -3,74 +3,75 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f2f5f8">
+  <meta name="theme-color" content="#173d35">
   <title>Dijkstra 最短路徑教學</title>
   <style>
-    :root { color-scheme: light; --ink:#10283d; --muted:#73879a; --paper:#f2f5f8; --line:#d6e0ea; --blue:#087d78; --orange:#bf5a13; --orange-soft:#f9e6d5; --pale:#dfe6ee; --navy:#172633; }
+    :root { color-scheme: light; --ink:#18332e; --muted:#718078; --paper:#f3f5f1; --line:#dce4de; --green:#1d5949; --green-soft:#e5f1e9; --gold:#d6a438; --gold-soft:#fff3d8; --red:#b74f43; --gray:#bac3bd; }
     * { box-sizing:border-box; }
     body { margin:0; color:var(--ink); background:var(--paper); font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif; }
     button,select { font:inherit; }
-    .top { background:#fff; border:1px solid var(--line); border-radius:0 0 13px 13px; box-shadow:0 3px 10px #10283d12; }
+    .top { background:#fff; border:1px solid var(--line); border-bottom:4px solid #f2cf72; border-radius:0 0 13px 13px; box-shadow:0 3px 10px #173d3512; }
     .top-inner,main { width:min(1140px,calc(100% - 28px)); margin:auto; }
     .top-inner { min-height:54px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
-    .brand { color:#314d65; font-size:14px; font-weight:800; }
-    .pickers { display:flex; gap:14px; align-items:center; color:#506479; font-size:12px; }
+    .brand { color:var(--green); font-size:14px; font-weight:800; }
+    .pickers { display:flex; gap:14px; align-items:center; color:#50665c; font-size:12px; }
     .pickers label { display:flex; gap:6px; align-items:center; }
-    select { padding:6px 9px; border:1px solid #cbd5df; border-radius:6px; color:var(--ink); background:#e3e9ef; }
+    select { padding:6px 9px; border:1px solid #d2ddd4; border-radius:6px; color:var(--ink); background:#edf2ed; }
     main { padding:18px 0 24px; }
     .layout { display:grid; grid-template-columns:minmax(0,2.1fr) minmax(265px,.9fr); gap:16px; }
-    .panel { border:1px solid var(--line); border-radius:12px; background:#fff; box-shadow:0 8px 20px #10283d0c; }
+    .panel { border:1px solid var(--line); border-radius:12px; background:#fffefa; box-shadow:0 8px 20px #193c3010; }
     .graph-panel { padding:16px; }
-    .graph-title,.side-title { display:flex; align-items:center; justify-content:space-between; gap:10px; color:#667f95; font-size:12px; letter-spacing:.12em; font-weight:800; }
+    .graph-title,.side-title { display:flex; align-items:center; justify-content:space-between; gap:10px; color:#718078; font-size:12px; letter-spacing:.12em; font-weight:800; }
     .graph-title span,.side-title span { letter-spacing:0; font-weight:500; }
     svg { display:block; width:100%; height:auto; margin:9px 0 2px; }
-    .edge { stroke:#cbd6df; stroke-width:4; stroke-linecap:round; transition:stroke .2s,stroke-width .2s; }
-    .edge.relax { stroke:var(--orange); stroke-width:7; }
-    .edge.path { stroke:var(--blue); stroke-width:7; }
-    .weight { fill:#465d73; font-size:14px; font-weight:800; text-anchor:middle; paint-order:stroke; stroke:white; stroke-width:5px; stroke-linejoin:round; }
-    .node circle { fill:#e3e9ef; stroke:#c6d2de; stroke-width:3; }
-    .node text { fill:#18344b; font-size:16px; font-weight:850; text-anchor:middle; dominant-baseline:central; }
-    .node.current circle { fill:#fff0e4; stroke:#bf5a13; }
-    .node.done circle { fill:#d9efec; stroke:#087d78; }
+    .edge { stroke:#cfdbd3; stroke-width:4; stroke-linecap:round; transition:stroke .2s,stroke-width .2s; }
+    .edge.relax { stroke:var(--gold); stroke-width:7; }
+    .edge.path { stroke:var(--green); stroke-width:7; }
+    .weight { fill:#354b41; font-size:14px; font-weight:800; text-anchor:middle; paint-order:stroke; stroke:white; stroke-width:5px; stroke-linejoin:round; }
+    .node circle { fill:#fff; stroke:#8ba59a; stroke-width:3; }
+    .node text { fill:var(--ink); font-size:16px; font-weight:850; text-anchor:middle; dominant-baseline:central; }
+    .node.current circle { fill:var(--gold-soft); stroke:#d6a438; }
+    .node.done circle { fill:var(--green-soft); stroke:var(--green); }
     .node.source circle { stroke-width:4; }
-    .node .dist { fill:#547089; font-size:13px; font-weight:800; }
-    .legend { display:flex; justify-content:center; flex-wrap:wrap; gap:16px; padding:5px 0 13px; color:#60778d; font-size:12px; }
-    .legend i { display:inline-block; width:11px; height:11px; margin-right:5px; border:2px solid #c6d2de; border-radius:50%; vertical-align:-1px; background:#e3e9ef; }
-    .legend .orange i { border-color:#bf5a13; background:#bf5a13; }
-    .legend .teal i { border-color:#087d78; background:#d9efec; }
-    .legend .line i { width:14px; height:4px; border:0; border-radius:5px; background:#087d78; }
+    .node .dist { fill:#718078; font-size:13px; font-weight:800; }
+    .legend { display:flex; justify-content:center; flex-wrap:wrap; gap:16px; padding:5px 0 13px; color:#718078; font-size:12px; }
+    .legend i { display:inline-block; width:11px; height:11px; margin-right:5px; border:2px solid #bac3bd; border-radius:50%; vertical-align:-1px; background:#e5e9e5; }
+    .legend .orange i { border-color:#d6a438; background:#d6a438; }
+    .legend .teal i { border-color:#1d5949; background:#e5f1e9; }
+    .legend .line i { width:14px; height:4px; border:0; border-radius:5px; background:#1d5949; }
     .controls { display:flex; gap:8px; align-items:center; }
-    .button { padding:10px 15px; border:0; border-radius:8px; color:var(--ink); background:#e3e9ef; cursor:pointer; }
+    .button { padding:10px 15px; border:0; border-radius:8px; color:var(--ink); background:#e5ebe5; cursor:pointer; }
     .button:disabled { opacity:.48; cursor:default; }
-    .button.next { color:#fff; background:var(--navy); }
-    .button.reset { font-weight:800; }
-    .slider { flex:1; min-width:60px; accent-color:#7d95aa; }
-    .counter { color:#58718a; font-size:12px; white-space:nowrap; }
-    .explain { min-height:72px; margin-top:12px; padding:12px 14px; border-left:4px solid #c8d6e2; border-radius:0 8px 8px 0; background:#e0e7ee; font-size:13px; line-height:1.65; }
-    .explain strong { margin-right:10px; padding:4px 8px; border-radius:5px; color:#314c62; background:#c9d4df; font-family:monospace; font-size:11px; }
-    .explain p { margin:5px 0 0 65px; color:#596f84; }
+    .button.next { color:#fff; background:var(--green); }
+    .button.next:hover { background:#124435; }
+    .button.reset { color:var(--green); font-weight:800; }
+    .slider { flex:1; min-width:60px; accent-color:var(--green); }
+    .counter { color:#718078; font-size:12px; white-space:nowrap; }
+    .explain { min-height:72px; margin-top:12px; padding:12px 14px; border-left:4px solid #cbd9ce; border-radius:0 8px 8px 0; background:#e5ebe5; font-size:13px; line-height:1.65; }
+    .explain strong { margin-right:10px; padding:4px 8px; border-radius:5px; color:#354b41; background:#d5dfd6; font-family:monospace; font-size:11px; }
+    .explain p { margin:5px 0 0 65px; color:#596b61; }
     .side { display:flex; flex-direction:column; gap:16px; }
     .side .panel { padding:16px; }
-    .queue { min-height:38px; margin-top:12px; padding:9px; border-radius:7px; color:#fff; background:#e0e6ed; font:700 13px monospace; }
-    .queue-item { display:inline-block; margin:0 4px 3px 0; padding:7px 9px; border-radius:6px; color:#506479; background:#fff; }
-    .queue-item.top-item { color:#fff; background:#ba5818; }
+    .queue { min-height:38px; margin-top:12px; padding:9px; border-radius:7px; color:#fff; background:#e5ebe5; font:700 13px monospace; }
+    .queue-item { display:inline-block; margin:0 4px 3px 0; padding:7px 9px; border-radius:6px; color:#50665c; background:#fffefa; }
+    .queue-item.top-item { color:#fff; background:var(--green); }
     .stats { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; }
-    .stat { padding:9px 10px; border-radius:8px; background:#e0e7ee; }
-    .stat small { display:block; color:#667f95; font-size:11px; }
+    .stat { padding:9px 10px; border-radius:8px; background:#e5ebe5; }
+    .stat small { display:block; color:#718078; font-size:11px; }
     .stat b { display:block; margin-top:2px; font-size:19px; }
     .table-wrap { margin-top:12px; overflow:auto; border:1px solid var(--line); border-radius:9px; }
     table { width:100%; border-collapse:collapse; font-size:12px; text-align:left; }
-    th { padding:8px 9px; color:#617990; background:#e0e7ee; font-size:11px; letter-spacing:.08em; }
-    td { padding:8px 9px; border-top:1px solid #edf1f4; white-space:nowrap; }
-    .infinity { color:#9aabba; }
-    .status-current { color:#a84b0e; font-weight:800; }
-    .status-done { color:#087d78; font-weight:800; }
-    .principles { color:#536a7e; font-size:13px; line-height:1.7; }
-    .principles h2 { margin:0 0 8px; color:#18344b; font-size:14px; }
+    th { padding:8px 9px; color:#718078; background:#e5ebe5; font-size:11px; letter-spacing:.08em; }
+    td { padding:8px 9px; border-top:1px solid #edf0ed; white-space:nowrap; }
+    .infinity { color:#98a39c; }
+    .status-current { color:#9a7020; font-weight:800; }
+    .status-done { color:var(--green); font-weight:800; }
+    .principles { color:#596b61; font-size:13px; line-height:1.7; }
+    .principles h2 { margin:0 0 8px; color:var(--ink); font-size:14px; }
     .principles ol { margin:0; padding-left:20px; }
     .principles li { margin:4px 0; }
-    .principles code { padding:1px 4px; border-radius:4px; color:#8c410e; background:#f9e6d5; font-family:monospace; }
-    .route-summary { margin-top:10px; padding:9px 10px; border-radius:7px; color:#075d59; background:#d9efec; font-weight:800; }
+    .principles code { padding:1px 4px; border-radius:4px; color:#76551a; background:#fff3d8; font-family:monospace; }
+    .route-summary { margin-top:10px; padding:9px 10px; border-radius:7px; color:var(--green); background:var(--green-soft); font-weight:800; }
     @media(max-width:800px) { .layout { grid-template-columns:1fr; } .side { display:grid; grid-template-columns:1fr 1fr; align-items:start; } }
     @media(max-width:560px) { .top-inner { align-items:flex-start; flex-direction:column; padding:8px 0; } .pickers { padding:0 8px 2px; } .side { display:flex; } main { padding-top:12px; } .graph-panel { padding:12px 9px; } .controls { flex-wrap:wrap; } .slider { order:2; flex-basis:70%; } }
   </style>
@@ -89,7 +90,7 @@
       <div id="explain" class="explain" aria-live="polite"></div>
     </section>
     <aside class="side">
-      <section class="panel"><div class="side-title"><strong>優先佇列（DIST，節點）</strong><span id="queue-count">0 項目</span></div><div id="queue" class="queue"></div><div class="stats"><div class="stat"><small>取出次數</small><b id="pops">0</b></div><div class="stat"><small>過期跳過</small><b id="stale" style="color:#bc342d">0</b></div><div class="stat"><small>鬆弛成功</small><b id="relaxations" style="color:#c65d13">0</b></div><div class="stat"><small>已出堆</small><b id="settled" style="color:#087d78">0</b></div></div></section>
+      <section class="panel"><div class="side-title"><strong>優先佇列（DIST，節點）</strong><span id="queue-count">0 項目</span></div><div id="queue" class="queue"></div><div class="stats"><div class="stat"><small>取出次數</small><b id="pops">0</b></div><div class="stat"><small>過期跳過</small><b id="stale" style="color:#b74f43">0</b></div><div class="stat"><small>鬆弛成功</small><b id="relaxations" style="color:#b08024">0</b></div><div class="stat"><small>已出堆</small><b id="settled" style="color:#1d5949">0</b></div></div></section>
       <section class="panel"><div class="side-title"><strong>DIST / PARENT 表</strong><span id="settled-count">出堆 0 / 6</span></div><div class="table-wrap"><table><thead><tr><th>點</th><th>DIST</th><th>PARENT</th><th>狀態</th></tr></thead><tbody id="rows"></tbody></table></div></section>
       <section class="panel principles"><h2>Dijkstra 原理</h2><ol><li>起點距離設為 <code>0</code>，其他點設為 <code>∞</code>。</li><li>從優先佇列取出目前距離最小、尚未定案的節點。</li><li>檢查它的鄰邊：若 <code>dist[u] + weight</code> 更小，就更新距離與前一點，並將新距離放入佇列。</li><li>重複直到取出終點。邊權重非負時，取出的最小距離即可定案。</li></ol><div id="route-summary" class="route-summary" aria-live="polite"></div></section>
     </aside>
