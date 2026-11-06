@@ -35,6 +35,8 @@ jobs:
           cp BFS_DFS.html _site/BFS_DFS.html
           cp MST.html _site/MST.html
           cp MST.cpp _site/MST.cpp
+          cp Dijkstra.html _site/Dijkstra.html
+          cp Dijkstra.cpp _site/Dijkstra.cpp
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
         with:

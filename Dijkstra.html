@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f2f5f8">
+  <title>Dijkstra 最短路徑教學</title>
+  <style>
+    :root { color-scheme: light; --ink:#10283d; --muted:#73879a; --paper:#f2f5f8; --line:#d6e0ea; --blue:#087d78; --orange:#bf5a13; --orange-soft:#f9e6d5; --pale:#dfe6ee; --navy:#172633; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); background:var(--paper); font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif; }
+    button,select { font:inherit; }
+    .top { background:#fff; border:1px solid var(--line); border-radius:0 0 13px 13px; box-shadow:0 3px 10px #10283d12; }
+    .top-inner,main { width:min(1140px,calc(100% - 28px)); margin:auto; }
+    .top-inner { min-height:54px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .nav { display:flex; align-items:center; gap:7px; overflow:auto; }
+    .nav a { white-space:nowrap; padding:9px 13px; border-radius:20px; color:#506479; background:#e6ebf1; text-decoration:none; font-size:12px; }
+    .nav a.active { color:#7d3706; background:var(--orange-soft); border:1px solid #c6550b; }
+    .pickers { display:flex; gap:14px; align-items:center; color:#506479; font-size:12px; }
+    .pickers label { display:flex; gap:6px; align-items:center; }
+    select { padding:6px 9px; border:1px solid #cbd5df; border-radius:6px; color:var(--ink); background:#e3e9ef; }
+    main { padding:18px 0 24px; }
+    .layout { display:grid; grid-template-columns:minmax(0,2.1fr) minmax(265px,.9fr); gap:16px; }
+    .panel { border:1px solid var(--line); border-radius:12px; background:#fff; box-shadow:0 8px 20px #10283d0c; }
+    .graph-panel { padding:16px; }
+    .graph-title,.side-title { display:flex; align-items:center; justify-content:space-between; gap:10px; color:#667f95; font-size:12px; letter-spacing:.12em; font-weight:800; }
+    .graph-title span,.side-title span { letter-spacing:0; font-weight:500; }
+    svg { display:block; width:100%; height:auto; margin:9px 0 2px; }
+    .edge { stroke:#cbd6df; stroke-width:4; stroke-linecap:round; transition:stroke .2s,stroke-width .2s; }
+    .edge.relax { stroke:var(--orange); stroke-width:7; }
+    .edge.path { stroke:var(--blue); stroke-width:7; }
+    .weight { fill:#465d73; font-size:14px; font-weight:800; text-anchor:middle; paint-order:stroke; stroke:white; stroke-width:5px; stroke-linejoin:round; }
+    .node circle { fill:#e3e9ef; stroke:#c6d2de; stroke-width:3; }
+    .node text { fill:#18344b; font-size:16px; font-weight:850; text-anchor:middle; dominant-baseline:central; }
+    .node.current circle { fill:#fff0e4; stroke:#bf5a13; }
+    .node.done circle { fill:#d9efec; stroke:#087d78; }
+    .node.source circle { stroke-width:4; }
+    .node .dist { fill:#547089; font-size:13px; font-weight:800; }
+    .legend { display:flex; justify-content:center; flex-wrap:wrap; gap:16px; padding:5px 0 13px; color:#60778d; font-size:12px; }
+    .legend i { display:inline-block; width:11px; height:11px; margin-right:5px; border:2px solid #c6d2de; border-radius:50%; vertical-align:-1px; background:#e3e9ef; }
+    .legend .orange i { border-color:#bf5a13; background:#bf5a13; }
+    .legend .teal i { border-color:#087d78; background:#d9efec; }
+    .legend .line i { width:14px; height:4px; border:0; border-radius:5px; background:#087d78; }
+    .controls { display:flex; gap:8px; align-items:center; }
+    .button { padding:10px 15px; border:0; border-radius:8px; color:var(--ink); background:#e3e9ef; cursor:pointer; }
+    .button:disabled { opacity:.48; cursor:default; }
+    .button.next { color:#fff; background:var(--navy); }
+    .button.reset { font-weight:800; }
+    .slider { flex:1; min-width:60px; accent-color:#7d95aa; }
+    .counter { color:#58718a; font-size:12px; white-space:nowrap; }
+    .explain { min-height:72px; margin-top:12px; padding:12px 14px; border-left:4px solid #c8d6e2; border-radius:0 8px 8px 0; background:#e0e7ee; font-size:13px; line-height:1.65; }
+    .explain strong { margin-right:10px; padding:4px 8px; border-radius:5px; color:#314c62; background:#c9d4df; font-family:monospace; font-size:11px; }
+    .explain p { margin:5px 0 0 65px; color:#596f84; }
+    .side { display:flex; flex-direction:column; gap:16px; }
+    .side .panel { padding:16px; }
+    .queue { min-height:38px; margin-top:12px; padding:9px; border-radius:7px; color:#fff; background:#e0e6ed; font:700 13px monospace; }
+    .queue-item { display:inline-block; margin:0 4px 3px 0; padding:7px 9px; border-radius:6px; color:#506479; background:#fff; }
+    .queue-item.top-item { color:#fff; background:#ba5818; }
+    .stats { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; }
+    .stat { padding:9px 10px; border-radius:8px; background:#e0e7ee; }
+    .stat small { display:block; color:#667f95; font-size:11px; }
+    .stat b { display:block; margin-top:2px; font-size:19px; }
+    .table-wrap { margin-top:12px; overflow:auto; border:1px solid var(--line); border-radius:9px; }
+    table { width:100%; border-collapse:collapse; font-size:12px; text-align:left; }
+    th { padding:8px 9px; color:#617990; background:#e0e7ee; font-size:11px; letter-spacing:.08em; }
+    td { padding:8px 9px; border-top:1px solid #edf1f4; white-space:nowrap; }
+    .infinity { color:#9aabba; }
+    .status-current { color:#a84b0e; font-weight:800; }
+    .status-done { color:#087d78; font-weight:800; }
+    @media(max-width:800px) { .layout { grid-template-columns:1fr; } .side { display:grid; grid-template-columns:1fr 1fr; align-items:start; } }
+    @media(max-width:560px) { .top-inner { align-items:flex-start; flex-direction:column; padding:8px 0; } .pickers { padding:0 8px 2px; } .side { display:flex; } main { padding-top:12px; } .graph-panel { padding:12px 9px; } .controls { flex-wrap:wrap; } .slider { order:2; flex-basis:70%; } }
+  </style>
+</head>
+<body>
+  <header class="top"><div class="top-inner">
+    <nav class="nav" aria-label="教學頁面"><a class="active" href="./Dijkstra.html">6 點 8 邊 Dijkstra</a><a href="./BFS_DFS.html">BFS / DFS</a><a href="./MST.html">MST</a></nav>
+    <div class="pickers"><label for="start">起點 <select id="start"><option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option><option value="4">E</option><option value="5">F</option></select></label><label for="target">終點 <select id="target"><option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option><option value="4">E</option><option value="5" selected>F</option></select></label></div>
+  </div></header>
+  <main><div class="layout">
+    <section class="panel graph-panel">
+      <div class="graph-title"><strong>加權地圖</strong><span>6 節點・8 邊</span></div>
+      <svg id="graph" viewBox="0 0 760 370" role="img" aria-label="A 到 F 的加權無向圖"></svg>
+      <div class="legend"><span class="orange"><i></i>正在展開</span><span class="teal"><i></i>已出堆（定案）</span><span><i></i>未探索</span><span class="line"><i></i>最短路徑</span></div>
+      <div class="controls"><button id="prev" class="button" type="button">← 上一步</button><button id="next" class="button next" type="button">下一步 ➜</button><button id="play" class="button" type="button">▶ 自動播放</button><button id="reset" class="button reset" type="button">↺ 重來</button><input id="slider" class="slider" type="range" min="0" max="0" value="0" aria-label="步驟進度"><span id="counter" class="counter">0 / 0</span></div>
+      <div id="explain" class="explain" aria-live="polite"></div>
+    </section>
+    <aside class="side">
+      <section class="panel"><div class="side-title"><strong>優先佇列（DIST，節點）</strong><span id="queue-count">0 項目</span></div><div id="queue" class="queue"></div><div class="stats"><div class="stat"><small>取出次數</small><b id="pops">0</b></div><div class="stat"><small>過期跳過</small><b id="stale" style="color:#bc342d">0</b></div><div class="stat"><small>鬆弛成功</small><b id="relaxations" style="color:#c65d13">0</b></div><div class="stat"><small>已出堆</small><b id="settled" style="color:#087d78">0</b></div></div></section>
+      <section class="panel"><div class="side-title"><strong>DIST / PARENT 表</strong><span id="settled-count">出堆 0 / 6</span></div><div class="table-wrap"><table><thead><tr><th>點</th><th>DIST</th><th>PARENT</th><th>狀態</th></tr></thead><tbody id="rows"></tbody></table></div></section>
+    </aside>
+  </div></main>
+  <script>
+    const names = ["A", "B", "C", "D", "E", "F"];
+    const points = [[82,185],[255,72],[255,298],[492,72],[492,298],[678,185]];
+    const edges = [
+      {u:0,v:1,w:2,id:"01",label:[168,128]}, {u:0,v:2,w:5,id:"02",label:[168,242]},
+      {u:1,v:2,w:1,id:"12",label:[255,185]}, {u:1,v:3,w:4,id:"13",label:[374,72]},
+      {u:2,v:4,w:2,id:"24",label:[374,298]}, {u:4,v:3,w:1,id:"34",label:[492,185]},
+      {u:3,v:5,w:3,id:"35",label:[582,128]}, {u:4,v:5,w:6,id:"45",label:[582,242]}
+    ];
+    let start = 0, target = 5, trace = [], step = 0, timer = null;
+    const byId = Object.fromEntries(edges.map(e => [e.id,e]));
+    const graph = document.getElementById("graph");
+    const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+    function buildTrace() {
+      const dist = Array(6).fill(Infinity), parent = Array(6).fill(-1), settled = Array(6).fill(false);
+      const queue = [], events = [];
+      let pops = 0, stale = 0, relaxations = 0;
+      const snapshot = (tag, message, detail, current = -1, edgeId = "") => events.push({tag,message,detail,current,edgeId,dist:[...dist],parent:[...parent],settled:[...settled],queue:queue.map(x=>({...x})),pops,stale,relaxations});
+      const enqueue = (d,v) => { queue.push({d,v}); queue.sort((a,b)=>a.d-b.d || a.v-b.v); };
+      dist[start] = 0; enqueue(0,start);
+      snapshot("START",`初始化：dist[${names[start]}] = 0，其餘為 ∞`,`把起點 ${names[start]} 放進優先佇列。∞ 代表目前還不知道怎麼到達。目標：找到 ${names[target]} 的最快路徑。`);
+      while (queue.length) {
+        const item = queue.shift(); pops++;
+        if (item.d !== dist[item.v] || settled[item.v]) {
+          stale++;
+          snapshot("SKIP",`取出 (${item.d}, ${names[item.v]})：過期項目`,`目前 dist[${names[item.v]}] = ${dist[item.v]}，這筆佇列資料已不是最新距離，因此略過。`,item.v);
+          continue;
+        }
+        const u = item.v; settled[u] = true;
+        snapshot("POP",`取出 (${item.d}, ${names[u]})：距離定案`,`最小距離的未定案節點是 ${names[u]}。Dijkstra 保證它現在的距離已是最短距離。`,u);
+        if (u === target) { snapshot("DONE",`已找到 ${names[target]} 的最短路徑`,`抵達目標後停止。最短距離為 ${dist[target]}，路徑是 ${pathTo(target,parent).map(v=>names[v]).join(" → ")}。`,u); break; }
+        for (const e of edges.filter(e => e.u === u || e.v === u)) {
+          const v = e.u === u ? e.v : e.u;
+          if (settled[v]) {
+            snapshot("CHECK",`檢查邊 ${names[u]}—${names[v]}（${e.w}）`,`${names[v]} 已經定案，略過這條邊。`,u,e.id); continue;
+          }
+          const candidate = dist[u] + e.w;
+          if (candidate < dist[v]) {
+            const old = dist[v]; dist[v] = candidate; parent[v] = u; enqueue(candidate,v); relaxations++;
+            snapshot("RELAX",`鬆弛 ${names[u]}—${names[v]}：${old === Infinity ? "∞" : old} → ${candidate}`,`經過 ${names[u]} 到 ${names[v]} 的距離是 ${dist[u]} + ${e.w} = ${candidate}，比舊值更短。更新 parent[${names[v]}] = ${names[u]}，並將新距離入列。`,u,e.id);
+          } else {
+            snapshot("CHECK",`檢查邊 ${names[u]}—${names[v]}（${e.w}）`,`候選距離 ${dist[u]} + ${e.w} = ${candidate}，沒有比目前 dist[${names[v]}] = ${dist[v]} 更短，因此不更新。`,u,e.id);
+          }
+        }
+      }
+      return events;
+    }
+    function pathTo(v,parent) { const p=[]; for(let x=v;x!==-1;x=parent[x]) p.push(x); return p.reverse(); }
+    function pathEdges(state) { const ids=new Set(); if(state.dist[target]!==Infinity) { const p=pathTo(target,state.parent); for(let i=1;i<p.length;i++) ids.add(`${Math.min(p[i-1],p[i])}${Math.max(p[i-1],p[i])}`); } return ids; }
+    function renderGraph(state) {
+      const bestPath = pathEdges(state);
+      graph.innerHTML = edges.map(e => `<line class="edge ${state.edgeId===e.id?'relax':''} ${bestPath.has(e.id)?'path':''}" x1="${points[e.u][0]}" y1="${points[e.u][1]}" x2="${points[e.v][0]}" y2="${points[e.v][1]}"/>`).join("") +
+        edges.map(e => `<text class="weight" x="${e.label[0]}" y="${e.label[1]}">${e.w}</text>`).join("") +
+        points.map((p,i) => `<g class="node ${state.current===i?'current':''} ${state.settled[i]?'done':''} ${i===start?'source':''}"><circle cx="${p[0]}" cy="${p[1]}" r="21"/><text x="${p[0]}" y="${p[1]}">${names[i]}</text><text class="dist" x="${p[0]}" y="${p[1]-35}">${state.dist[i]===Infinity?'∞':state.dist[i]}</text></g>`).join("");
+    }
+    function render() {
+      const s=trace[step]; renderGraph(s);
+      const q=document.getElementById("queue");
+      q.innerHTML=s.queue.length?s.queue.map((x,i)=>`<span class="queue-item ${i===0?'top-item':''}">(${x.d}, ${names[x.v]})</span>`).join(""):'<span class="queue-item">空</span>';
+      document.getElementById("queue-count").textContent=`${s.queue.length} 項目`;
+      document.getElementById("pops").textContent=s.pops; document.getElementById("stale").textContent=s.stale;
+      document.getElementById("relaxations").textContent=s.relaxations;
+      document.getElementById("settled").textContent=s.settled.filter(Boolean).length;
+      document.getElementById("settled-count").textContent=`出堆 ${s.settled.filter(Boolean).length} / 6`;
+      document.getElementById("rows").innerHTML=names.map((name,i)=>`<tr><td>${name}</td><td class="${s.dist[i]===Infinity?'infinity':''}">${s.dist[i]===Infinity?'∞':s.dist[i]}</td><td>${s.parent[i]===-1?'—':names[s.parent[i]]}</td><td class="${s.settled[i]?'status-done':s.current===i?'status-current':''}">${s.settled[i]?'已出堆':s.current===i?'處理中':s.dist[i]===Infinity?'未探索':'排隊中'}</td></tr>`).join("");
+      document.getElementById("explain").innerHTML=`<strong>${esc(s.tag)}</strong>${esc(s.message)}<p>${esc(s.detail)}</p>`;
+      document.getElementById("counter").textContent=`${step} / ${trace.length-1}`;
+      document.getElementById("slider").max=trace.length-1; document.getElementById("slider").value=step;
+      document.getElementById("prev").disabled=step===0; document.getElementById("next").disabled=step===trace.length-1;
+    }
+    function stopPlay() { if(timer) clearInterval(timer); timer=null; document.getElementById("play").textContent="▶ 自動播放"; }
+    function rebuild() { stopPlay(); start=Number(document.getElementById("start").value); target=Number(document.getElementById("target").value); trace=buildTrace(); step=0; render(); }
+    document.getElementById("prev").addEventListener("click",()=>{stopPlay();if(step>0){step--;render();}});
+    document.getElementById("next").addEventListener("click",()=>{if(step<trace.length-1){step++;render();}if(step===trace.length-1)stopPlay();});
+    document.getElementById("reset").addEventListener("click",rebuild);
+    document.getElementById("slider").addEventListener("input",e=>{stopPlay();step=Number(e.target.value);render();});
+    document.getElementById("play").addEventListener("click",()=>{if(timer){stopPlay();return;} if(step===trace.length-1)step=0; document.getElementById("play").textContent="⏸ 暫停";timer=setInterval(()=>{if(step>=trace.length-1){stopPlay();return;}step++;render();},800);});
+    document.getElementById("start").addEventListener("change",rebuild); document.getElementById("target").addEventListener("change",rebuild);
+    rebuild();
+  </script>
+</body>
+</html>
