@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#173d35">
+  <title>最小生成樹｜演算法筆記</title>
+  <style>
+    :root { color-scheme: light; --ink: #18332e; --muted: #66776f; --paper: #f5f4ee; --surface: #fffefa; --line: #dfe4dc; --green: #1d5949; --green-soft: #e5f1e9; --yellow: #f2cf72; }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: var(--paper); font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif; line-height: 1.7; }
+    header { color: white; background: var(--green); border-bottom: 4px solid var(--yellow); }
+    .bar, main { width: min(960px, calc(100% - 36px)); margin: auto; }
+    .bar { min-height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    a { color: var(--green); }
+    header a { color: white; text-decoration: none; }
+    main { padding: 42px 0 64px; }
+    h1 { margin: 0; font-size: clamp(30px, 5vw, 44px); line-height: 1.2; }
+    h2 { margin: 0 0 12px; font-size: 22px; }
+    .lead { color: var(--muted); font-size: 17px; }
+    .card { margin-top: 24px; padding: 24px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); box-shadow: 0 12px 32px #1c392f0d; }
+    .methods { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+    .methods .card { margin-top: 16px; }
+    .pill { display: inline-block; padding: 3px 10px; border-radius: 999px; color: var(--green); background: var(--green-soft); font-size: 14px; font-weight: 700; }
+    code, pre { font-family: Consolas, "Cascadia Code", monospace; }
+    pre { overflow-x: auto; padding: 16px; border-radius: 10px; color: #e6eee9; background: #18332e; }
+    .download { display: inline-block; margin-top: 8px; padding: 10px 16px; border-radius: 8px; color: white; background: var(--green); font-weight: 700; text-decoration: none; }
+    .download:hover { background: #124435; }
+    @media (max-width: 560px) { .bar { align-items: flex-start; flex-direction: column; justify-content: center; padding: 12px 0; } main { padding-top: 30px; } .card { padding: 18px; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="bar"><strong>演算法筆記</strong><a href="./index.html">回到首頁</a></div>
+  </header>
+  <main>
+    <span class="pill">圖論｜最小生成樹</span>
+    <h1>最小生成樹 MST</h1>
+    <p class="lead">用 Kruskal 和 Prim 找出連通加權無向圖中，連接所有頂點且總權重最小的樹。</p>
+
+    <section class="methods">
+      <article class="card">
+        <h2>Kruskal</h2>
+        <p>將邊依權重排序，再逐條嘗試加入。併查集的 <code>find</code> 使用路徑壓縮；合併時由編號較小的根當老大。兩端已在同一集合的邊會形成環並跳過。</p>
+      </article>
+      <article class="card">
+        <h2>Prim</h2>
+        <p>從 A 開始，用最小優先佇列挑選跨出目前樹的最小邊。佇列使用 <code>(w, v, from)</code>，頂點已在樹中的舊票直接丟棄。</p>
+      </article>
+    </section>
+
+    <section class="card">
+      <h2>範例結果</h2>
+      <p>頂點 A～F 對應 0～5。這張圖的最小生成樹總重為 <strong>13</strong>。</p>
+      <pre>Kruskal: B-C(1), A-C(2), D-E(2), E-F(3), B-D(5)
+Prim:    A-C(2), C-B(1), B-D(5), D-E(2), E-F(3)
+總重:    13</pre>
+      <p>Kruskal 另外測試了不連通圖，會在各連通分量中分別選邊，得到最小生成森林。</p>
+      <a class="download" href="./MST.cpp" download>下載 MST.cpp</a>
+    </section>
+  </main>
+</body>
+</html>

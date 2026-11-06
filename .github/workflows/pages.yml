@@ -33,6 +33,8 @@ jobs:
           cp max_heap.html _site/max_heap.html
           cp hash_table.html _site/hash_table.html
           cp BFS_DFS.html _site/BFS_DFS.html
+          cp MST.html _site/MST.html
+          cp MST.cpp _site/MST.cpp
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
         with:
