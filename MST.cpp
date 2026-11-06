@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cctype>
 #include <iostream>
 #include <queue>
 #include <tuple>
@@ -83,7 +84,7 @@ void kruskal(int n, vector<Edge> edges, bool showParent) {
         cout << "  這是最小生成森林；圖不連通，無法得到一棵生成樹。\n";
 }
 
-void prim(int n, const vector<Edge>& edges) {
+void prim(int n, const vector<Edge>& edges, int start) {
     vector<vector<pair<int, int>>> graph(n);
     for (auto [w, u, v] : edges) {
         graph[u].push_back({v, w});
@@ -101,10 +102,10 @@ void prim(int n, const vector<Edge>& edges) {
     vector<Edge> chosen;
     int total = 0;
 
-    inTree[0] = true;  // 從 A 開始
-    for (auto [v, w] : graph[0]) pq.emplace(w, v, 0);
+    inTree[start] = true;
+    for (auto [v, w] : graph[start]) pq.emplace(w, v, start);
 
-    cout << "Prim:\n";
+    cout << "Prim（起點 " << names[start] << "）:\n";
     while (!pq.empty() && (int)chosen.size() < n - 1) {
         auto [w, v, from] = pq.top();
         pq.pop();
@@ -137,7 +138,16 @@ int main() {
 
     cout << "=== 原圖 ===\n";
     kruskal(6, edges, true);
-    prim(6, edges);
+
+    char startName = 'A';
+    cout << "\n請輸入 Prim 起點 (A-F): ";
+    if (!(cin >> startName)) startName = 'A';
+    startName = static_cast<char>(toupper(static_cast<unsigned char>(startName)));
+    if (startName < 'A' || startName > 'F') {
+        cout << "起點無效，改用 A。\n";
+        startName = 'A';
+    }
+    prim(6, edges, startName - 'A');
 
     // 測試不連通圖：ABC 與 DEF 之間沒有邊。
     vector<Edge> disconnected = {

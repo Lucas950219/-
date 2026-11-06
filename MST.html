@@ -4,373 +4,215 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#173d35">
-  <title>最小生成樹互動練習</title>
+  <title>最小生成樹 MST｜互動步驟</title>
   <style>
-    :root {
-      color-scheme: light;
-      --ink: #18332e;
-      --muted: #708078;
-      --paper: #f3f5f1;
-      --surface: #fff;
-      --line: #dce4de;
-      --green: #1d5949;
-      --green-soft: #e5f1e9;
-      --red: #bd5547;
-      --red-soft: #fae9e5;
-      --gold: #d8a738;
-      --shadow: 0 16px 44px #193c3010;
-    }
-    * { box-sizing: border-box; }
-    body { margin: 0; color: var(--ink); background: var(--paper); font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif; }
-    button { color: inherit; font: inherit; }
-    .topbar { height: 66px; color: #fff; background: #173d35; border-bottom: 4px solid #f2cf72; }
-    .topbar-inner { width: min(1180px, calc(100% - 36px)); height: 100%; margin: auto; display: flex; align-items: center; justify-content: space-between; }
-    .brand { font-weight: 800; letter-spacing: .04em; }
-    .home { color: #e5eee8; font-size: 14px; text-decoration: none; }
-    main { width: min(1180px, calc(100% - 36px)); margin: 28px auto 54px; }
-    .heading { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 18px; }
-    h1 { margin: 0; font-size: clamp(26px, 4vw, 36px); line-height: 1.2; }
-    .subtitle { margin: 7px 0 0; color: var(--muted); font-size: 14px; }
-    .toolbar { display: flex; align-items: center; gap: 9px; }
-    .segmented { display: inline-flex; padding: 4px; border: 1px solid var(--line); border-radius: 11px; background: #e9eee9; }
-    .segmented button, .reset, .action { border: 0; border-radius: 8px; cursor: pointer; font-weight: 750; transition: .16s ease; }
-    .segmented button { padding: 9px 15px; color: #53655c; background: transparent; }
-    .segmented button.active { color: var(--green); background: #fff; box-shadow: 0 2px 8px #173d3518; }
-    .reset { padding: 11px 14px; color: var(--green); background: var(--green-soft); }
-    .reset:hover { background: #d3e8d9; }
-    .layout { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(300px, .85fr); gap: 18px; align-items: stretch; }
-    .panel { border: 1px solid var(--line); border-radius: 16px; background: var(--surface); box-shadow: var(--shadow); }
-    .graph-panel { min-width: 0; overflow: hidden; }
-    .graph-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 20px 0; }
-    .graph-head strong { font-size: 15px; }
-    .hint { color: var(--muted); font-size: 12px; }
-    .graph-wrap { padding: 4px 10px 0; }
-    svg { display: block; width: 100%; height: auto; min-height: 260px; }
-    .edge-line { stroke: #cfdbd3; stroke-width: 5; stroke-linecap: round; cursor: pointer; transition: stroke .16s, stroke-width .16s; }
-    .edge-line:hover { stroke: #91b49e; stroke-width: 8; }
-    .edge-line.accepted { stroke: var(--green); stroke-width: 7; }
-    .edge-line.skipped { stroke: #c4cbc6; stroke-width: 4; stroke-dasharray: 8 7; }
-    .edge-line.target { stroke: var(--gold); stroke-width: 8; }
-    .edge-line.selected { stroke: var(--red); stroke-width: 8; }
-    .edge-hit { stroke: transparent; stroke-width: 26; cursor: pointer; }
-    .edge-label rect { fill: #fff; stroke: #e2e8e3; stroke-width: 1; }
-    .edge-label text { fill: #354b41; font-size: 14px; font-weight: 800; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
-    .edge-label.selected rect { fill: var(--red-soft); stroke: #e5a99e; }
-    .edge-label.accepted rect { fill: var(--green-soft); stroke: #b6d5be; }
-    .node circle { fill: #fff; stroke: #8ba59a; stroke-width: 3; }
-    .node.in-tree circle { fill: var(--green); stroke: var(--green); }
-    .node text { fill: var(--ink); font-size: 16px; font-weight: 850; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
-    .node.in-tree text { fill: #fff; }
-    .graph-foot { display: flex; flex-wrap: wrap; gap: 14px; padding: 0 20px 18px; color: var(--muted); font-size: 12px; }
-    .legend { display: inline-flex; align-items: center; gap: 6px; }
-    .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--green); }
-    .dot.gold { background: var(--gold); }
-    .dot.gray { background: #c4cbc6; }
-    .side { display: flex; flex-direction: column; gap: 14px; }
-    .status-panel { padding: 20px; }
-    .step-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-    .step-label { color: var(--muted); font-size: 13px; font-weight: 700; }
-    .step-count { padding: 4px 9px; border-radius: 999px; color: var(--green); background: var(--green-soft); font-size: 12px; font-weight: 800; }
-    .prompt { min-height: 56px; margin: 12px 0 14px; font-size: 17px; font-weight: 800; line-height: 1.5; }
-    .feedback { min-height: 42px; margin-bottom: 14px; padding: 10px 12px; border-radius: 9px; color: #53655c; background: #f2f5f2; font-size: 13px; line-height: 1.5; }
-    .feedback.good { color: #18563d; background: var(--green-soft); }
-    .feedback.bad { color: #953c32; background: var(--red-soft); }
-    .actions { display: flex; gap: 8px; }
-    .action { flex: 1; padding: 11px 10px; }
-    .action.primary { color: #fff; background: var(--green); }
-    .action.primary:hover:not(:disabled) { background: #124435; }
-    .action.secondary { color: #5d4a20; background: #f6edda; }
-    .action.secondary:hover:not(:disabled) { background: #f0dfb8; }
-    .action:disabled { opacity: .42; cursor: not-allowed; }
-    .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 17px; }
-    .stat { padding: 11px 12px; border: 1px solid #e7ece8; border-radius: 10px; background: #fbfcfb; }
-    .stat-label { color: var(--muted); font-size: 12px; }
-    .stat-value { margin-top: 2px; font-size: 21px; font-weight: 850; }
-    .tree-nodes { min-height: 28px; display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-    .node-chip { padding: 3px 9px; border: 1px solid #c5ddcc; border-radius: 999px; color: var(--green); background: var(--green-soft); font-size: 12px; font-weight: 800; }
-    .history-panel { flex: 1; min-height: 150px; padding: 16px 20px; }
-    .history-title { margin: 0 0 9px; font-size: 14px; }
-    .history { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
-    .history li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 6px; border-bottom: 1px solid #edf0ed; font-size: 13px; }
-    .history li:last-child { border-bottom: 0; }
-    .history .accepted-text { color: var(--green); font-weight: 750; }
-    .history .skipped-text { color: #858d88; }
-    .history .empty { color: #9aa39e; }
-    .mobile-list { display: none; }
-    @media (max-width: 800px) {
-      .heading { align-items: flex-start; flex-direction: column; }
-      .layout { grid-template-columns: 1fr; }
-      .side { display: grid; grid-template-columns: 1fr 1fr; }
-      .status-panel { grid-row: span 2; }
-    }
-    @media (max-width: 560px) {
-      main { width: min(100% - 22px, 480px); margin-top: 20px; }
-      .topbar-inner { width: calc(100% - 24px); }
-      .heading { gap: 14px; }
-      .toolbar { width: 100%; }
-      .segmented { flex: 1; }
-      .segmented button { flex: 1; padding-inline: 8px; }
-      .graph-head { align-items: flex-start; flex-direction: column; padding-inline: 14px; }
-      .graph-wrap { padding-inline: 2px; }
-      svg { min-height: 210px; }
-      .graph-foot { padding-inline: 14px; }
-      .side { display: flex; }
-      .status-panel { padding: 17px; }
-      .history-panel { min-height: 110px; }
-    }
+    :root { color-scheme: light; --ink:#18332e; --muted:#718078; --paper:#f3f5f1; --line:#dce4de; --green:#1d5949; --green-soft:#e5f1e9; --gold:#d6a438; --red:#b74f43; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); background:var(--paper); font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif; }
+    button, select { font:inherit; }
+    .top { height:62px; color:white; background:#173d35; border-bottom:4px solid #f2cf72; }
+    .top-inner, main { width:min(1140px,calc(100% - 32px)); margin:auto; }
+    .top-inner { height:100%; display:flex; align-items:center; justify-content:space-between; font-weight:800; }
+    .top a { color:#e8f1eb; text-decoration:none; font-size:14px; font-weight:500; }
+    main { padding:28px 0 48px; }
+    .heading { display:flex; align-items:center; justify-content:space-between; gap:18px; margin-bottom:18px; }
+    h1 { margin:0; font-size:clamp(26px,4vw,36px); line-height:1.25; }
+    .subtitle { margin:5px 0 0; color:var(--muted); font-size:14px; }
+    .controls { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+    .tabs { display:flex; gap:3px; padding:4px; border-radius:10px; background:#e6ece7; }
+    .tabs button, .button { border:0; border-radius:7px; padding:9px 14px; cursor:pointer; font-weight:750; }
+    .tabs button { color:#596b61; background:transparent; }
+    .tabs button.active { color:var(--green); background:#fff; box-shadow:0 2px 8px #173d3518; }
+    .start { display:none; align-items:center; gap:5px; padding:0 9px; border:1px solid var(--line); border-radius:9px; color:var(--muted); background:white; font-size:13px; }
+    .start.visible { display:flex; }
+    .start select { padding:8px 3px; border:0; outline:0; color:var(--green); background:transparent; font-weight:800; cursor:pointer; }
+    .button.next { color:#fff; background:var(--green); }
+    .button.next:hover { background:#124435; }
+    .button.reset { color:var(--green); background:var(--green-soft); }
+    .layout { display:grid; grid-template-columns:minmax(0,1.6fr) minmax(285px,.85fr); gap:16px; }
+    .panel { border:1px solid var(--line); border-radius:15px; background:#fff; box-shadow:0 14px 38px #193c3010; }
+    .graph-panel { overflow:hidden; }
+    .graph-title { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:16px 18px 0; font-size:14px; font-weight:800; }
+    .muted { color:var(--muted); font-size:12px; font-weight:500; }
+    .graph-wrap { padding:4px 10px 0; }
+    svg { display:block; width:100%; height:auto; }
+    .edge-line { stroke:#cfdbd3; stroke-width:5; stroke-linecap:round; transition:stroke .2s,stroke-width .2s; }
+    .edge-line.accepted { stroke:var(--green); stroke-width:7; }
+    .edge-line.skipped { stroke:#bac3bd; stroke-width:4; stroke-dasharray:8 7; }
+    .edge-line.current { stroke:var(--gold); stroke-width:9; }
+    .edge-label rect { fill:white; stroke:#e2e8e3; }
+    .edge-label text { fill:#354b41; font-size:14px; font-weight:800; text-anchor:middle; dominant-baseline:central; }
+    .edge-label.accepted rect { fill:var(--green-soft); stroke:#b6d5be; }
+    .edge-label.skipped rect { fill:#f0f2f0; stroke:#cbd1cd; }
+    .edge-label.current rect { fill:#fff3d8; stroke:#e4c87c; }
+    .node circle { fill:white; stroke:#8ba59a; stroke-width:3; }
+    .node.tree circle { fill:var(--green); stroke:var(--green); }
+    .node text { fill:var(--ink); font-size:16px; font-weight:850; text-anchor:middle; dominant-baseline:central; }
+    .node.tree text { fill:white; }
+    .legend { display:flex; flex-wrap:wrap; gap:14px; padding:0 18px 17px; color:var(--muted); font-size:12px; }
+    .legend span { display:flex; align-items:center; gap:6px; }
+    .swatch { width:10px; height:10px; border-radius:50%; background:var(--green); }
+    .swatch.gold { background:var(--gold); }
+    .swatch.gray { background:#bac3bd; }
+    .side { display:flex; flex-direction:column; gap:14px; }
+    .progress { padding:18px; }
+    .stepbar { display:flex; justify-content:space-between; gap:8px; color:var(--muted); font-size:13px; font-weight:750; }
+    .count { padding:3px 9px; border-radius:99px; color:var(--green); background:var(--green-soft); font-size:12px; }
+    .message { min-height:52px; margin:13px 0 12px; font-size:17px; font-weight:800; line-height:1.5; }
+    .detail { min-height:51px; padding:10px 11px; border-radius:9px; color:#52645b; background:#f2f5f2; font-size:13px; line-height:1.6; overflow-wrap:anywhere; }
+    .detail.success { color:#18563d; background:var(--green-soft); }
+    .stats { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:14px; }
+    .stat { padding:10px 11px; border:1px solid #e7ece8; border-radius:9px; }
+    .stat small { display:block; color:var(--muted); font-size:12px; }
+    .stat strong { display:block; margin-top:2px; font-size:21px; }
+    .node-list { display:flex; flex-wrap:wrap; gap:6px; min-height:25px; margin-top:8px; }
+    .chip { padding:2px 9px; border:1px solid #c5ddcc; border-radius:99px; color:var(--green); background:var(--green-soft); font-size:12px; font-weight:800; }
+    .history-panel { flex:1; padding:15px 18px; }
+    .history-panel h2 { margin:0 0 9px; font-size:14px; }
+    .history { display:grid; gap:5px; margin:0; padding:0; list-style:none; }
+    .history li { display:flex; justify-content:space-between; gap:10px; padding-bottom:5px; border-bottom:1px solid #edf0ed; font-size:13px; }
+    .history li:last-child { border:0; }
+    .yes { color:var(--green); font-weight:750; }
+    .no { color:#858d88; }
+    @media(max-width:800px) { .heading { align-items:flex-start; flex-direction:column; } .layout { grid-template-columns:1fr; } .side { display:grid; grid-template-columns:1fr 1fr; } .progress { grid-row:span 2; } }
+    @media(max-width:560px) { .top-inner,main { width:calc(100% - 22px); } main { padding-top:20px; } .controls { width:100%; } .tabs { flex:1; } .tabs button { flex:1; } .start { flex:1; justify-content:center; } .side { display:flex; } .graph-title { align-items:flex-start; flex-direction:column; } .graph-wrap { padding-inline:2px; } }
   </style>
 </head>
 <body>
-  <header class="topbar">
-    <div class="topbar-inner"><div class="brand">演算法互動練習</div><a class="home" href="./index.html">回首頁</a></div>
-  </header>
+  <header class="top"><div class="top-inner"><span>演算法互動練習</span><a href="./index.html">回首頁</a></div></header>
   <main>
     <div class="heading">
-      <div><h1>最小生成樹 MST</h1><p class="subtitle">點選圖上的邊，逐步完成最小生成樹。</p></div>
-      <div class="toolbar">
-        <div class="segmented" role="group" aria-label="選擇演算法">
-          <button id="kruskalTab" class="active" type="button">Kruskal</button>
-          <button id="primTab" type="button">Prim</button>
-        </div>
-        <button id="resetButton" class="reset" type="button">重新開始</button>
+      <div><h1>最小生成樹 MST</h1><p class="subtitle">選擇演算法，按「下一步」觀看每一步的變化。</p></div>
+      <div class="controls">
+        <div class="tabs" role="group" aria-label="選擇演算法"><button id="kruskalTab" class="active" type="button">Kruskal</button><button id="primTab" type="button">Prim</button></div>
+        <label id="startPicker" class="start" for="startVertex">起點
+          <select id="startVertex" aria-label="Prim 起始頂點"><option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option><option value="4">E</option><option value="5">F</option></select>
+        </label>
+        <button id="nextButton" class="button next" type="button">下一步</button>
+        <button id="resetButton" class="button reset" type="button">重來</button>
       </div>
     </div>
-
     <div class="layout">
-      <section class="panel graph-panel" aria-label="加權圖互動區">
-        <div class="graph-head"><strong id="graphTitle">加權無向圖</strong><span id="graphHint" class="hint">點選目前應處理的邊</span></div>
+      <section class="panel graph-panel" aria-label="MST 演算法圖示">
+        <div class="graph-title"><strong id="graphTitle">Kruskal</strong><span class="muted">頂點 A～F · 點線表示邊，數字表示權重</span></div>
         <div class="graph-wrap"><svg id="graph" viewBox="0 0 760 370" role="img" aria-label="頂點 A 到 F 的加權無向圖"></svg></div>
-        <div class="graph-foot">
-          <span class="legend"><i class="dot"></i>已加入</span>
-          <span class="legend"><i class="dot gold"></i>目前候選</span>
-          <span class="legend"><i class="dot gray"></i>已跳過</span>
-        </div>
+        <div class="legend"><span><i class="swatch"></i>已加入生成樹</span><span><i class="swatch gold"></i>本步處理</span><span><i class="swatch gray"></i>因成環跳過</span></div>
       </section>
-
       <aside class="side">
-        <section class="panel status-panel">
-          <div class="step-top"><span id="stepLabel" class="step-label">Kruskal 步驟</span><span id="stepCount" class="step-count">0 / 5</span></div>
-          <div id="prompt" class="prompt" aria-live="polite"></div>
-          <div id="feedback" class="feedback" aria-live="polite"></div>
-          <div id="actions" class="actions"></div>
-          <div class="stats">
-            <div class="stat"><div class="stat-label">已選邊數</div><div id="edgeCount" class="stat-value">0 / 5</div></div>
-            <div class="stat"><div class="stat-label">目前總重</div><div id="totalWeight" class="stat-value">0</div></div>
-          </div>
-          <div class="stat-label" style="margin-top:14px">已連接頂點</div>
-          <div id="treeNodes" class="tree-nodes"></div>
+        <section class="panel progress">
+          <div class="stepbar"><span id="stepLabel">Kruskal 步驟</span><span id="stepCount" class="count">0 / 6</span></div>
+          <div id="message" class="message" aria-live="polite">按「下一步」開始。</div>
+          <div id="detail" class="detail" aria-live="polite">尚未開始</div>
+          <div class="stats"><div class="stat"><small>已選邊數</small><strong id="edgeCount">0 / 5</strong></div><div class="stat"><small>目前總重</small><strong id="weight">0</strong></div></div>
+          <small style="display:block;margin-top:13px;color:var(--muted)">目前樹中的頂點</small>
+          <div id="nodes" class="node-list"></div>
         </section>
-        <section class="panel history-panel">
-          <h2 class="history-title">操作紀錄</h2>
-          <ol id="history" class="history"></ol>
-        </section>
+        <section class="panel history-panel"><h2>步驟紀錄</h2><ol id="history" class="history"><li class="muted">按下一步開始</li></ol></section>
       </aside>
     </div>
   </main>
-
   <script>
-    const vertexNames = ["A", "B", "C", "D", "E", "F"];
-    const positions = [[82, 185], [255, 72], [255, 298], [492, 72], [492, 298], [678, 185]];
+    const names = ["A", "B", "C", "D", "E", "F"];
+    const points = [[82,185],[255,72],[255,298],[492,72],[492,298],[678,185]];
     const edges = [
-      { id: "AB", a: 0, b: 1, w: 4 }, { id: "AC", a: 0, b: 2, w: 2 },
-      { id: "BC", a: 1, b: 2, w: 1 }, { id: "BD", a: 1, b: 3, w: 5 },
-      { id: "CD", a: 2, b: 3, w: 8 }, { id: "CE", a: 2, b: 4, w: 10 },
-      { id: "DE", a: 3, b: 4, w: 2 }, { id: "DF", a: 3, b: 5, w: 6 },
-      { id: "EF", a: 4, b: 5, w: 3 }
+      {id:"AB",a:0,b:1,w:4},{id:"AC",a:0,b:2,w:2},{id:"BC",a:1,b:2,w:1},
+      {id:"BD",a:1,b:3,w:5},{id:"CD",a:2,b:3,w:8},{id:"CE",a:2,b:4,w:10},
+      {id:"DE",a:3,b:4,w:2},{id:"DF",a:3,b:5,w:6},{id:"EF",a:4,b:5,w:3}
     ];
-    const sortedEdges = [...edges].sort((x, y) => x.w - y.w || x.a - y.a || x.b - y.b);
-    const edgeById = Object.fromEntries(edges.map(edge => [edge.id, edge]));
-    let mode = "kruskal";
-    let accepted = [];
-    let skipped = [];
-    let history = [];
-    let cursor = 0;
-    let selectedId = null;
-    let feedback = "先從權重最小的邊開始。";
-    let feedbackType = "";
-    let completed = false;
-
+    const byId = Object.fromEntries(edges.map(e => [e.id,e]));
+    const sorted = [...edges].sort((x,y) => x.w-y.w || x.a-y.a || x.b-y.b);
+    let mode = "kruskal", start = 0, trace = [], step = 0;
     const graph = document.getElementById("graph");
-    const prompt = document.getElementById("prompt");
-    const feedbackBox = document.getElementById("feedback");
-    const actions = document.getElementById("actions");
 
-    function edgeName(edge) { return `${vertexNames[edge.a]}-${vertexNames[edge.b]} (${edge.w})`; }
-    function mstWeight() { return accepted.reduce((sum, id) => sum + edgeById[id].w, 0); }
-    function isCyclic(candidateId) {
-      const parent = vertexNames.map((_, i) => i);
+    function label(e) { return `${names[e.a]}-${names[e.b]} (${e.w})`; }
+    function makeKruskal() {
+      const parent = names.map((_,i) => i), events = [];
       const find = x => parent[x] === x ? x : (parent[x] = find(parent[x]));
-      for (const id of accepted) {
-        const edge = edgeById[id];
-        const ra = find(edge.a), rb = find(edge.b);
-        if (ra !== rb) parent[Math.max(ra, rb)] = Math.min(ra, rb);
+      let chosen = 0, total = 0;
+      for (const e of sorted) {
+        const ra = find(e.a), rb = find(e.b);
+        if (ra === rb) {
+          events.push({edge:e.id, accepted:false, total, parent:[...parent], detail:`find(${names[e.a]}) = ${ra}，find(${names[e.b]}) = ${rb}；兩端同根，跳過以免成環。`});
+        } else {
+          const low = Math.min(ra,rb), high = Math.max(ra,rb);
+          parent[high] = low;
+          chosen++; total += e.w;
+          events.push({edge:e.id, accepted:true, total, parent:[...parent], detail:`合併集合，較小的根 ${names[low]} 當老大。p[] = [${parent.join(", ")}]`});
+          if (chosen === names.length-1) break;
+        }
       }
-      const candidate = edgeById[candidateId];
-      return find(candidate.a) === find(candidate.b);
+      return events;
     }
-    function currentNodes() {
-      if (mode === "prim") {
-        const nodes = new Set([0]);
-        for (const id of accepted) { nodes.add(edgeById[id].a); nodes.add(edgeById[id].b); }
-        return nodes;
+    function makePrim() {
+      const inside = new Set([start]), queue = [], events = [];
+      let total = 0;
+      const addEdges = from => edges.forEach(e => {
+        if (e.a === from && !inside.has(e.b)) queue.push({id:e.id,w:e.w,v:e.b,from:e.a});
+        else if (e.b === from && !inside.has(e.a)) queue.push({id:e.id,w:e.w,v:e.a,from:e.b});
+      });
+      addEdges(start);
+      while (inside.size < names.length) {
+        queue.sort((x,y) => x.w-y.w || x.v-y.v || x.from-y.from);
+        let ticket;
+        do { ticket = queue.shift(); } while (ticket && inside.has(ticket.v));
+        if (!ticket) break;
+        inside.add(ticket.v); total += ticket.w;
+        const e = byId[ticket.id];
+        events.push({edge:e.id,accepted:true,total,nodes:[...inside].sort((a,b)=>a-b),detail:`加入 ${label(e)}；樹中頂點：${[...inside].sort((a,b)=>a-b).map(i=>names[i]).join("、")}。`});
+        addEdges(ticket.v);
       }
-      const nodes = new Set();
-      for (const id of accepted) { nodes.add(edgeById[id].a); nodes.add(edgeById[id].b); }
-      return nodes;
+      return events;
     }
-    function primCandidates() {
-      const inside = currentNodes();
-      return edges.filter(edge => inside.has(edge.a) !== inside.has(edge.b)).map(edge => {
-        const from = inside.has(edge.a) ? edge.a : edge.b;
-        const to = inside.has(edge.a) ? edge.b : edge.a;
-        return { edge, from, to };
-      }).sort((x, y) => x.edge.w - y.edge.w || x.to - y.to || x.from - y.from);
-    }
-    function expectedEdge() {
-      if (mode === "kruskal") return sortedEdges[cursor] || null;
-      return primCandidates()[0]?.edge || null;
+    function rebuild() { trace = mode === "kruskal" ? makeKruskal() : makePrim(); step = 0; render(); }
+    function visibleEvents() { return trace.slice(0,step); }
+    function currentSets() {
+      if (mode === "prim") return new Set(step ? trace[step-1].nodes : [start]);
+      const set = new Set();
+      for (const event of visibleEvents()) if (event.accepted) { set.add(byId[event.edge].a); set.add(byId[event.edge].b); }
+      return set;
     }
     function renderGraph() {
-      const target = expectedEdge();
-      const lines = edges.map(edge => {
-        const [x1, y1] = positions[edge.a], [x2, y2] = positions[edge.b];
-        const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
-        const state = accepted.includes(edge.id) ? "accepted" : skipped.includes(edge.id) ? "skipped" : "";
-        const focus = edge.id === selectedId ? "selected" : edge.id === target?.id ? "target" : "";
-        return `<g class="edge-group" data-edge="${edge.id}" tabindex="0" role="button" aria-label="邊 ${vertexNames[edge.a]} 到 ${vertexNames[edge.b]}，權重 ${edge.w}">
-          <line class="edge-hit" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" />
-          <line class="edge-line ${state} ${focus}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" />
-          <g class="edge-label ${state} ${focus}" transform="translate(${mx},${my})"><rect x="-17" y="-13" width="34" height="26" rx="9"/><text y="1">${edge.w}</text></g>
-        </g>`;
+      const shown = visibleEvents(), last = shown[shown.length-1];
+      const accepted = new Set(shown.filter(e=>e.accepted).map(e=>e.edge));
+      const skipped = new Set(shown.filter(e=>!e.accepted).map(e=>e.edge));
+      const current = last?.edge;
+      const lines = edges.map(e => {
+        const [x1,y1]=points[e.a], [x2,y2]=points[e.b], mx=(x1+x2)/2, my=(y1+y2)/2;
+        const state = accepted.has(e.id) ? "accepted" : skipped.has(e.id) ? "skipped" : "";
+        const focus = current === e.id ? "current" : "";
+        return `<g><line class="edge-line ${state} ${focus}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/><g class="edge-label ${state} ${focus}" transform="translate(${mx},${my})"><rect x="-17" y="-13" width="34" height="26" rx="9"/><text y="1">${e.w}</text></g></g>`;
       }).join("");
-      const inTree = currentNodes();
-      const nodes = positions.map(([x, y], i) => `<g class="node ${inTree.has(i) ? "in-tree" : ""}"><circle cx="${x}" cy="${y}" r="25"/><text x="${x}" y="${y + 1}">${vertexNames[i]}</text></g>`).join("");
+      const tree = currentSets();
+      const nodes = points.map(([x,y],i)=>`<g class="node ${tree.has(i)?"tree":""}"><circle cx="${x}" cy="${y}" r="25"/><text x="${x}" y="${y+1}">${names[i]}</text></g>`).join("");
       graph.innerHTML = lines + nodes;
-      graph.querySelectorAll(".edge-group").forEach(group => {
-        group.addEventListener("click", () => chooseEdge(group.dataset.edge));
-        group.addEventListener("keydown", event => {
-          if (event.key === "Enter" || event.key === " ") { event.preventDefault(); chooseEdge(group.dataset.edge); }
-        });
-      });
-    }
-    function renderActions() {
-      if (mode === "kruskal" && selectedId && !completed) {
-        actions.innerHTML = `<button class="action primary" id="addEdge" type="button">加入生成樹</button><button class="action secondary" id="skipEdge" type="button">跳過此邊</button>`;
-        document.getElementById("addEdge").addEventListener("click", addKruskalEdge);
-        document.getElementById("skipEdge").addEventListener("click", skipKruskalEdge);
-      } else if (completed) {
-        actions.innerHTML = `<button class="action primary" id="restartGame" type="button">再玩一次</button>`;
-        document.getElementById("restartGame").addEventListener("click", resetGame);
-      } else {
-        actions.innerHTML = `<button class="action primary" type="button" disabled>${mode === "prim" ? "點選最小的跨樹邊" : "先點選下一條候選邊"}</button>`;
-      }
     }
     function render() {
-      const target = expectedEdge();
-      document.getElementById("kruskalTab").classList.toggle("active", mode === "kruskal");
-      document.getElementById("primTab").classList.toggle("active", mode === "prim");
-      document.getElementById("graphTitle").textContent = mode === "kruskal" ? "加權無向圖 · 依權重檢查" : "加權無向圖 · 從 A 擴展";
-      document.getElementById("graphHint").textContent = mode === "kruskal" ? "點選目前應處理的邊，再判斷加入或跳過" : "點選目前最小的跨樹邊";
-      document.getElementById("stepLabel").textContent = mode === "kruskal" ? "Kruskal 步驟" : "Prim 步驟（起點 A）";
-      document.getElementById("stepCount").textContent = mode === "kruskal" ? `${Math.min(cursor + (selectedId ? 1 : 0), sortedEdges.length)} / ${sortedEdges.length}` : `${accepted.length} / 5`;
-      document.getElementById("edgeCount").textContent = `${accepted.length} / 5`;
-      document.getElementById("totalWeight").textContent = mstWeight();
-      document.getElementById("treeNodes").innerHTML = [...currentNodes()].sort((a, b) => a - b).map(i => `<span class="node-chip">${vertexNames[i]}</span>`).join("") || `<span class="stat-label">尚未連接</span>`;
-      feedbackBox.textContent = feedback;
-      feedbackBox.className = `feedback ${feedbackType}`;
-      if (completed) {
-        prompt.textContent = `完成！最小生成樹總重是 ${mstWeight()}。`;
-      } else if (mode === "kruskal") {
-        prompt.textContent = selectedId ? `要如何處理 ${edgeName(edgeById[selectedId])}？` : target ? `找出下一條候選邊：${edgeName(target)}` : "所有頂點都已連通。";
-      } else {
-        prompt.textContent = target ? `從目前的樹選最小跨樹邊：${edgeName(target)}` : "所有頂點都已連通。";
-      }
-      const historyItems = history.map(item => `<li><span>${edgeName(edgeById[item.id])}</span><span class="${item.accepted ? "accepted-text" : "skipped-text"}">${item.accepted ? "加入" : "成環跳過"}</span></li>`).join("");
-      document.getElementById("history").innerHTML = historyItems || `<li class="empty">尚無操作</li>`;
+      const shown = visibleEvents(), last = shown[shown.length-1], done = step === trace.length;
+      document.getElementById("kruskalTab").classList.toggle("active",mode === "kruskal");
+      document.getElementById("primTab").classList.toggle("active",mode === "prim");
+      document.getElementById("startPicker").classList.toggle("visible",mode === "prim");
+      document.getElementById("graphTitle").textContent = mode === "kruskal" ? "Kruskal · 依權重檢查" : `Prim · 從 ${names[start]} 開始`;
+      document.getElementById("stepLabel").textContent = `${mode === "kruskal" ? "Kruskal" : "Prim"} 步驟`;
+      document.getElementById("stepCount").textContent = `${step} / ${trace.length}`;
+      document.getElementById("message").textContent = done ? `完成！最小生成樹總重為 ${last?.total ?? 0}。` : !last ? "按「下一步」開始。" : `${label(byId[last.edge])}：${last.accepted ? "加入生成樹" : "形成環，跳過"}`;
+      document.getElementById("detail").textContent = last ? last.detail : (mode === "prim" ? `起點 ${names[start]} 已在樹中，尚未選邊。` : "邊會依權重由小到大處理。" );
+      document.getElementById("detail").classList.toggle("success",!!last?.accepted);
+      const total = last?.total ?? 0;
+      const picked = shown.filter(e=>e.accepted).length;
+      document.getElementById("edgeCount").textContent = `${picked} / 5`;
+      document.getElementById("weight").textContent = total;
+      document.getElementById("nodes").innerHTML = [...currentSets()].sort((a,b)=>a-b).map(i=>`<span class="chip">${names[i]}</span>`).join("");
+      document.getElementById("history").innerHTML = shown.map(e=>`<li><span>${label(byId[e.edge])}</span><span class="${e.accepted?"yes":"no"}">${e.accepted?"加入":"成環跳過"}</span></li>`).join("") || `<li class="muted">按下一步開始</li>`;
+      document.getElementById("nextButton").disabled = done;
+      document.getElementById("nextButton").textContent = done ? "已完成" : "下一步";
       renderGraph();
-      renderActions();
     }
-    function chooseEdge(id) {
-      if (completed) return;
-      if (mode === "kruskal") {
-        const target = expectedEdge();
-        if (id !== target?.id) {
-          feedback = `目前應先檢查 ${target ? edgeName(target) : "其他邊"}。`;
-          feedbackType = "bad";
-          selectedId = null;
-        } else {
-          selectedId = id;
-          feedback = isCyclic(id) ? "這條邊的兩端已連通，加入會形成環。" : "這條邊不會形成環，判斷是否加入生成樹。";
-          feedbackType = "";
-        }
-      } else {
-        const target = expectedEdge();
-        if (id !== target?.id) {
-          const crossing = primCandidates().some(candidate => candidate.edge.id === id);
-          feedback = crossing ? `這條邊不是目前最小的跨樹邊；應選 ${edgeName(target)}。` : "這條邊沒有連接樹內與樹外的頂點。";
-          feedbackType = "bad";
-        } else {
-          accepted.push(id);
-          history.push({ id, accepted: true });
-          feedback = `${edgeName(edgeById[id])} 已加入，繼續從新樹邊界挑選。`;
-          feedbackType = "good";
-          if (accepted.length === 5) completed = true;
-        }
-      }
-      render();
-    }
-    function addKruskalEdge() {
-      if (!selectedId) return;
-      if (isCyclic(selectedId)) {
-        feedback = "這條邊會形成環，不能加入；請選擇「跳過此邊」。";
-        feedbackType = "bad";
-      } else {
-        accepted.push(selectedId);
-        history.push({ id: selectedId, accepted: true });
-        feedback = `${edgeName(edgeById[selectedId])} 已加入生成樹。`;
-        feedbackType = "good";
-        advanceKruskal();
-      }
-      render();
-    }
-    function skipKruskalEdge() {
-      if (!selectedId) return;
-      if (!isCyclic(selectedId)) {
-        feedback = "這條邊不會形成環，Kruskal 應該把它加入。";
-        feedbackType = "bad";
-      } else {
-        skipped.push(selectedId);
-        history.push({ id: selectedId, accepted: false });
-        feedback = `${edgeName(edgeById[selectedId])} 會形成環，正確跳過。`;
-        feedbackType = "good";
-        advanceKruskal();
-      }
-      render();
-    }
-    function advanceKruskal() {
-      cursor++;
-      selectedId = null;
-      if (accepted.length === 5) {
-        completed = true;
-        feedback = "六個頂點已連通，生成樹完成。";
-        feedbackType = "good";
-      }
-    }
-    function resetGame() {
-      accepted = [];
-      skipped = [];
-      history = [];
-      cursor = 0;
-      selectedId = null;
-      completed = false;
-      feedback = "先從權重最小的邊開始。";
-      feedbackType = "";
-      render();
-    }
-    document.getElementById("kruskalTab").addEventListener("click", () => { mode = "kruskal"; resetGame(); });
-    document.getElementById("primTab").addEventListener("click", () => { mode = "prim"; resetGame(); });
-    document.getElementById("resetButton").addEventListener("click", resetGame);
-    render();
+    document.getElementById("kruskalTab").addEventListener("click",()=>{mode="kruskal";rebuild();});
+    document.getElementById("primTab").addEventListener("click",()=>{mode="prim";rebuild();});
+    document.getElementById("startVertex").addEventListener("change",event=>{start=Number(event.target.value);rebuild();});
+    document.getElementById("nextButton").addEventListener("click",()=>{if(step<trace.length){step++;render();}});
+    document.getElementById("resetButton").addEventListener("click",()=>{step=0;render();});
+    rebuild();
   </script>
 </body>
 </html>
