@@ -37,6 +37,10 @@ jobs:
           cp MST.cpp _site/MST.cpp
           cp Dijkstra.html _site/Dijkstra.html
           cp Dijkstra.cpp _site/Dijkstra.cpp
+          mkdir -p _site/food-rag/assets _site/food-rag/data
+          cp food-rag/index.html food-rag/styles.css food-rag/app.js food-rag/engine.js food-rag/llm-worker.js _site/food-rag/
+          cp food-rag/assets/mark.svg _site/food-rag/assets/
+          cp food-rag/data/knowledge.json food-rag/data/SOURCES.md _site/food-rag/data/
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
         with:

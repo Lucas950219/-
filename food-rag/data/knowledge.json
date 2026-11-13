@@ -1,0 +1,2627 @@
+{
+  "updatedAt": "2026-11-13",
+  "center": {
+    "name": "台北車站中央大廳",
+    "lat": 25.0478,
+    "lng": 121.517
+  },
+  "methodology": {
+    "country": "國家／地區表示料理風格，並非店家註冊國、食材產地或政治分類。",
+    "coordinates": "餐廳座標由公開街址在街區尺度約估；京站店家共用同一建物座標，未推算樓層步行距離。",
+    "distance": "請以 Haversine 公式計算台北車站中央大廳到店家約略座標的平面直線距離，不代表導航距離或步行時間。",
+    "supplyStatus": "branch-menu 表示分店公開介紹、訂餐頁或用餐紀錄出現此品項；brand-menu 表示品牌菜單／餐點組合，分店當日供應待確認。兩者皆不代表即時庫存。",
+    "ingredients": "proteins 僅列來源明確提及的主要食材，不是完整成分表或過敏原清單；空陣列代表未知。不可據此保證不含牛肉、豬肉、蛋奶、海鮮或其他過敏原。",
+    "vegetarian": "只有來源明確稱植物性或列在蔬食菜單中的餐點才標蔬食，嚴格飲食需求仍請向店家確認湯底、醬汁與交叉接觸。",
+    "freshness": "checkedAt 為資料查閱日，非菜單最後修改日；來源可能是較早食記，當日營業、價格與品項應以店家公告為準。",
+    "coverage": "此為人工整理的公開資料庫，非完整餐廳名錄，未收錄站內舊微風櫃位資料。"
+  },
+  "sources": [
+    {
+      "id": "liu-menu",
+      "title": "劉山東牛肉麵：清燉與紅燒餐點、分店地址",
+      "url": "https://we4-travel.com/liu-shan-dong-beef-noodle/",
+      "checkedAt": "2026-11-13",
+      "kind": "editorial"
+    },
+    {
+      "id": "da-menu",
+      "title": "非凡大探索：大稻埕魯肉飯店家與餐點",
+      "url": "https://news.ustv.com.tw/food/shop/10632",
+      "checkedAt": "2026-11-13",
+      "kind": "media"
+    },
+    {
+      "id": "da-order",
+      "title": "卡個位：大稻埕魯肉飯可訂餐菜單",
+      "url": "https://www.cutaway.com.tw/makeOrder.php?sid=2650",
+      "checkedAt": "2026-11-13",
+      "kind": "ordering"
+    },
+    {
+      "id": "fu-menu",
+      "title": "Klook：阜杭豆漿地址與早餐菜單",
+      "url": "https://www.klook.com/zh-TW/blog/fuhang-soy-milk/",
+      "checkedAt": "2026-11-13",
+      "kind": "editorial"
+    },
+    {
+      "id": "fu-recent",
+      "title": "阜杭豆漿 2026 早餐品項整理",
+      "url": "https://momoblog.tw/fuhangsoymilk/",
+      "checkedAt": "2026-11-13",
+      "kind": "editorial"
+    },
+    {
+      "id": "chung",
+      "title": "臺北旅遊網：阿宗麵線店址與料理介紹",
+      "url": "https://www.travel.taipei/en/gourmet/details/609",
+      "checkedAt": "2026-11-13",
+      "kind": "official"
+    },
+    {
+      "id": "dian-store",
+      "title": "點水樓官方：懷寧店",
+      "url": "https://www.dianshuilou.com.tw/m/location_3.html",
+      "checkedAt": "2026-11-13",
+      "kind": "official"
+    },
+    {
+      "id": "dian-menu",
+      "title": "OpenRice：點水樓懷寧店餐點與店址",
+      "url": "https://sg.openrice.com/en/taipei/r-dian-shui-lou-zhongzheng-district-taiwanese-tea-r5506",
+      "checkedAt": "2026-11-13",
+      "kind": "directory"
+    },
+    {
+      "id": "katsu-store",
+      "title": "吉豚屋和億北車店分店與菜單整理",
+      "url": "https://www.fonfood.com/store/5513946",
+      "checkedAt": "2026-11-13",
+      "kind": "directory"
+    },
+    {
+      "id": "katsu-menu",
+      "title": "吉豚屋官方線上菜單",
+      "url": "https://www.katsuya-taiwan.com/menu",
+      "checkedAt": "2026-11-13",
+      "kind": "official"
+    },
+    {
+      "id": "mc-store",
+      "title": "麥當勞官方：台北館前餐廳",
+      "url": "https://www.mcdonalds.com/tw/zh-tw/location/8/1030007.html",
+      "checkedAt": "2026-11-13",
+      "kind": "official"
+    },
+    {
+      "id": "mc-menu",
+      "title": "台灣麥當勞官方完整菜單",
+      "url": "https://www.mcdonalds.com/tw/zh-tw/full-menu.html",
+      "checkedAt": "2026-11-13",
+      "kind": "official"
+    },
+    {
+      "id": "tim-menu",
+      "title": "敲敲食記：添好運 HOYII 北車站店六種餐點與地址（2023）",
+      "url": "https://cc77.tw/%E5%8F%B0%E5%8C%97%E6%B7%BB%E5%A5%BD%E9%81%8B/",
+      "checkedAt": "2026-11-13",
+      "kind": "editorial"
+    },
+    {
+      "id": "tim-store",
+      "title": "MENU美食誌：添好運 HOYII 北車站店、地址及餐點紀錄",
+      "url": "https://menutaiwan.com/restaurants/jdoTBJSjIK",
+      "checkedAt": "2026-11-13",
+      "kind": "directory"
+    },
+    {
+      "id": "q-restaurants",
+      "title": "京站官方：現行主題餐廳名錄與地址",
+      "url": "https://www.qsquare.com.tw/food-list.php",
+      "checkedAt": "2026-11-13",
+      "kind": "official"
+    },
+    {
+      "id": "q-foodcourt",
+      "title": "京站官方：現行 B3 美食廣場名錄",
+      "url": "https://www.qsquare.com.tw/food-list.php?lv01_sel=A14112600020592",
+      "checkedAt": "2026-11-13",
+      "kind": "official"
+    },
+    {
+      "id": "api-store",
+      "title": "APINARA 官方：台北京站店",
+      "url": "https://apinara.com.tw/taipei-qsquare/",
+      "checkedAt": "2026-11-13",
+      "kind": "official"
+    },
+    {
+      "id": "api-menu",
+      "title": "APINARA 官方：風味精選",
+      "url": "https://apinara.com.tw/",
+      "checkedAt": "2026-11-13",
+      "kind": "official"
+    },
+    {
+      "id": "bellini-store",
+      "title": "京站官方：BELLINI Pasta Pasta 台北京站店",
+      "url": "https://www.qsquare.com.tw/food-detail.php?lv01_sel=A14112600017b60&lv01_type=4F&lv02_id=A141128032703af",
+      "checkedAt": "2026-11-13",
+      "kind": "official"
+    },
+    {
+      "id": "bellini-menu",
+      "title": "OpenRice：BELLINI 台北京站店餐點",
+      "url": "https://sg.openrice.com/en/taipei/r-bellini-pasta-pasta-%E5%8F%B0%E5%8C%97%E4%BA%AC%E7%AB%99%E5%BA%97-zhongzheng-district-italian-tea-r5152",
+      "checkedAt": "2026-11-13",
+      "kind": "directory"
+    },
+    {
+      "id": "bellini-recent",
+      "title": "BELLINI 京站 2025 餐點紀錄",
+      "url": "https://jeanitalin.pixnet.net/blog/posts/5071641033",
+      "checkedAt": "2026-11-13",
+      "kind": "editorial"
+    },
+    {
+      "id": "ootoya-store",
+      "title": "京站官方：大戶屋 B3",
+      "url": "https://www.qsquare.com.tw/food-detail.php?lv01_sel=A14112600017b60&lv01_type=B3&lv02_id=A18022300165263",
+      "checkedAt": "2026-11-13",
+      "kind": "official"
+    },
+    {
+      "id": "ootoya-menu",
+      "title": "大戶屋台灣官方：人氣料理",
+      "url": "https://www.ootoya.com.tw/menu.aspx",
+      "checkedAt": "2026-11-13",
+      "kind": "official"
+    },
+    {
+      "id": "snow-store",
+      "title": "京站官方：雪嶽山 B3",
+      "url": "https://www.qsquare.com.tw/food-detail.php?lv01_sel=A14112600020592&lv01_type=B3&lv02_id=A1411280297d100",
+      "checkedAt": "2026-11-13",
+      "kind": "official"
+    },
+    {
+      "id": "snow-menu",
+      "title": "雪嶽山品牌餐點紀錄：泡菜烤肉石鍋拌飯（台北101分店，2013）",
+      "url": "https://pingu.blog/2013-06-16-243/",
+      "checkedAt": "2026-11-13",
+      "kind": "editorial"
+    },
+    {
+      "id": "india-store",
+      "title": "京站官方：印度風 B3 品牌及手工烤餅",
+      "url": "https://www.qsquare.com.tw/food-detail.php?lv01_sel=A14112600020592&lv01_type=B3&lv02_id=A21110100012ec1",
+      "checkedAt": "2026-11-13",
+      "kind": "official"
+    },
+    {
+      "id": "india-menu",
+      "title": "印度風京站分店用餐紀錄：蔬菜與豆腐咖哩",
+      "url": "https://note.com/miyabism_net/n/need605ea9cab",
+      "checkedAt": "2026-11-13",
+      "kind": "editorial"
+    },
+    {
+      "id": "duan-store",
+      "title": "京站官方：段純貞 B3 牛肉麵",
+      "url": "https://www.qsquare.com.tw/food-detail.php?lv01_sel=A14112600020592&lv01_type=B3&lv02_id=A1609010005038f",
+      "checkedAt": "2026-11-13",
+      "kind": "official"
+    },
+    {
+      "id": "anzu-store",
+      "title": "京站官方：杏子日式豬排 4F",
+      "url": "https://www.qsquare.com.tw/food-detail.php?lv01_sel=A14112600017b60&lv01_type=4F&lv02_id=A1411280352c4eb",
+      "checkedAt": "2026-11-13",
+      "kind": "official"
+    },
+    {
+      "id": "anzu-menu",
+      "title": "銀座杏子官方：經典豬排品項",
+      "url": "https://ikingza.com/",
+      "checkedAt": "2026-11-13",
+      "kind": "official"
+    },
+    {
+      "id": "momo-store",
+      "title": "京站官方：Mo-Mo-Paradise 4F 壽喜燒",
+      "url": "https://www.qsquare.com.tw/food-detail.php?lv01_sel=A14112600017b60&lv01_type=4F&lv02_id=A14112803405e7f",
+      "checkedAt": "2026-11-13",
+      "kind": "official"
+    },
+    {
+      "id": "momo-menu",
+      "title": "Mo-Mo-Paradise 2026 菜單與肉品整理",
+      "url": "https://baliman.tw/blog/post/momo-menu",
+      "checkedAt": "2026-11-13",
+      "kind": "editorial"
+    },
+    {
+      "id": "tenki-store",
+      "title": "天吉屋官方：台北京站店地址",
+      "url": "https://www.tenkichiya.com.tw/",
+      "checkedAt": "2026-11-13",
+      "kind": "official"
+    },
+    {
+      "id": "tenki-menu",
+      "title": "天吉屋餐點介紹：天吉丼、天幕御食與海老天丼",
+      "url": "https://jingxuan.tw/ten-kichi-ya/",
+      "checkedAt": "2026-11-13",
+      "kind": "editorial"
+    },
+    {
+      "id": "nanmen",
+      "title": "京站官方：小南門傳統豆花 B3 及花生豆花",
+      "url": "https://www.qsquare.com.tw/food-detail.php?lv01_sel=A14112600020592&lv01_type=B3&lv02_id=A2309090001bc15",
+      "checkedAt": "2026-11-13",
+      "kind": "official"
+    },
+    {
+      "id": "kyoto-store",
+      "title": "京站官方：京都勝牛 B3 日本炸牛排",
+      "url": "https://www.qsquare.com.tw/food-detail.php?lv01_sel=A14112600017b60&lv01_type=B3&lv02_id=A19042500024c76",
+      "checkedAt": "2026-11-13",
+      "kind": "official"
+    },
+    {
+      "id": "kyoto-menu",
+      "title": "愛食記：京都勝牛京站分店菜色",
+      "url": "https://ifoodie.tw/restaurant/5cc7b26f23679c16870269c9",
+      "checkedAt": "2026-11-13",
+      "kind": "directory"
+    },
+    {
+      "id": "vegan-store",
+      "title": "京站官方：Vegan Amore 蔬慕 3F",
+      "url": "https://www.qsquare.com.tw/food-detail.php?lv01_sel=A14112600017b60&lv01_type=3F&lv02_id=A20092400012a85",
+      "checkedAt": "2026-11-13",
+      "kind": "official"
+    },
+    {
+      "id": "vegan-menu",
+      "title": "Nico＆妮喃小語：蔬慕京站店植物性餐點與菜單（2026-07）",
+      "url": "https://niniyeh.com/vegan-amore/",
+      "checkedAt": "2026-11-13",
+      "kind": "editorial"
+    },
+    {
+      "id": "kaifun-store",
+      "title": "京站官方：開飯川食堂 B3",
+      "url": "https://www.qsquare.com.tw/food-detail.php?lv01_sel=A14112600017b60&lv01_type=B3&lv02_id=A14112803741644",
+      "checkedAt": "2026-11-13",
+      "kind": "official"
+    },
+    {
+      "id": "kaifun-top",
+      "title": "開飯川食堂官方：主廚推薦",
+      "url": "https://kaifun.com.tw/zh-TW/menu/menu_top",
+      "checkedAt": "2026-11-13",
+      "kind": "official"
+    },
+    {
+      "id": "kaifun-main",
+      "title": "開飯川食堂官方：經典美食",
+      "url": "https://www.kaifun.com.tw/index.php/zh-TW/menu/menuSingle",
+      "checkedAt": "2026-11-13",
+      "kind": "official"
+    },
+    {
+      "id": "jin-store",
+      "title": "京站官方：真珠台灣佳味 B3",
+      "url": "https://www.qsquare.com.tw/food-detail.php?lv01_sel=A14112600017b60&lv01_type=B3&lv02_id=A20071300015eff",
+      "checkedAt": "2026-11-13",
+      "kind": "official"
+    },
+    {
+      "id": "jin-menu",
+      "title": "真珠台灣佳味官方：單點菜色",
+      "url": "https://www.jinzhu.com.tw/zh-TW/menu/main_menu",
+      "checkedAt": "2026-11-13",
+      "kind": "official"
+    },
+    {
+      "id": "snow-sea",
+      "title": "WalkerLand：雪嶽山海鮮豆腐湯鍋飯／麵（小碧潭分店，2020）",
+      "url": "https://www.walkerland.com.tw/article/view/266437",
+      "kind": "editorial",
+      "checkedAt": "2026-11-13"
+    },
+    {
+      "id": "snow-soy",
+      "title": "中國信託金融園區官方DM：雪嶽山大醬湯鍋飯／麵（2023-08）",
+      "url": "https://www.ctbcfinancialpark.com/upload/news/20230728150043h5j7.pdf",
+      "kind": "official",
+      "checkedAt": "2026-11-13"
+    },
+    {
+      "id": "snow-beef",
+      "title": "中國信託金融園區官方DM：雪嶽山辣牛肉湯鍋飯／麵（2023-11）",
+      "url": "https://www.ctbcfinancialpark.com/upload/news/20231024105159xnnK.pdf",
+      "kind": "official",
+      "checkedAt": "2026-11-13"
+    }
+  ],
+  "restaurants": [
+    {
+      "id": "liu",
+      "name": "劉山東小吃店",
+      "country": "台灣",
+      "address": "台北市中正區開封街一段14巷2號",
+      "lat": 25.0452,
+      "lng": 121.5137,
+      "coordinateAccuracy": "approximate",
+      "sourceIds": [
+        "liu-menu"
+      ],
+      "note": "分店位置依公開地址整理；餐點參考所列來源，當日供應請洽店家。"
+    },
+    {
+      "id": "dadaocheng",
+      "name": "大稻埕魯肉飯",
+      "country": "台灣",
+      "address": "台北市大同區長安西路220巷17號",
+      "lat": 25.051,
+      "lng": 121.5145,
+      "coordinateAccuracy": "approximate",
+      "sourceIds": [
+        "da-menu",
+        "da-order"
+      ],
+      "note": "分店位置依公開地址整理；餐點參考所列來源，當日供應請洽店家。"
+    },
+    {
+      "id": "fuhang",
+      "name": "阜杭豆漿",
+      "country": "台灣",
+      "address": "台北市中正區忠孝東路一段108號2樓（華山市場）",
+      "lat": 25.0441,
+      "lng": 121.5249,
+      "coordinateAccuracy": "approximate",
+      "sourceIds": [
+        "fu-menu",
+        "fu-recent"
+      ],
+      "note": "分店位置依公開地址整理；餐點參考所列來源，當日供應請洽店家。"
+    },
+    {
+      "id": "achung",
+      "name": "阿宗麵線 西門店",
+      "country": "台灣",
+      "address": "台北市萬華區峨眉街8之1號",
+      "lat": 25.0433,
+      "lng": 121.5077,
+      "coordinateAccuracy": "approximate",
+      "sourceIds": [
+        "chung"
+      ],
+      "note": "分店位置依公開地址整理；餐點參考所列來源，當日供應請洽店家。"
+    },
+    {
+      "id": "dianshuilou",
+      "name": "點水樓 懷寧店",
+      "country": "中國",
+      "address": "台北市中正區懷寧街64號",
+      "lat": 25.0428,
+      "lng": 121.514,
+      "coordinateAccuracy": "approximate",
+      "sourceIds": [
+        "dian-store",
+        "dian-menu"
+      ],
+      "note": "地域依江浙料理風格分類；非表示餐廳公司註冊地。菜單依來源整理，當日供應請洽分店。"
+    },
+    {
+      "id": "katsuya",
+      "name": "吉豚屋 和億北車店",
+      "country": "日本",
+      "address": "台北市中正區忠孝西路一段36號B1（HOYII北車站）",
+      "lat": 25.0463,
+      "lng": 121.517,
+      "coordinateAccuracy": "approximate",
+      "sourceIds": [
+        "katsu-store",
+        "katsu-menu"
+      ],
+      "note": "分店位置依公開地址整理；餐點參考所列來源，當日供應請洽店家。"
+    },
+    {
+      "id": "mcdonalds",
+      "name": "麥當勞 台北館前餐廳",
+      "country": "美國",
+      "address": "台北市中正區館前路8號",
+      "lat": 25.0458,
+      "lng": 121.5149,
+      "coordinateAccuracy": "approximate",
+      "sourceIds": [
+        "mc-store",
+        "mc-menu"
+      ],
+      "note": "品項參考台灣品牌菜單，分店及時段供應待確認；不提供即時庫存。"
+    },
+    {
+      "id": "timhowan",
+      "name": "添好運 HOYII北車站店",
+      "country": "香港",
+      "address": "台北市中正區忠孝西路一段36號1樓（HOYII北車站）",
+      "lat": 25.0463,
+      "lng": 121.517,
+      "coordinateAccuracy": "approximate",
+      "sourceIds": [
+        "tim-menu",
+        "tim-store"
+      ],
+      "note": "品項及店址有公開分店用餐紀錄佐證，含2023年食記；菜單可能調整，當日供應請洽店家。"
+    },
+    {
+      "id": "apinara",
+      "name": "APINARA 台北京站店",
+      "country": "泰國",
+      "address": "台北市大同區承德路一段1號4樓（京站時尚廣場）",
+      "lat": 25.0493,
+      "lng": 121.5172,
+      "coordinateAccuracy": "approximate",
+      "sourceIds": [
+        "api-store",
+        "api-menu",
+        "q-restaurants"
+      ],
+      "note": "京站官方標示 11/11 開幕；品項參考品牌公開風味精選，分店供應待確認。"
+    },
+    {
+      "id": "bellini",
+      "name": "BELLINI Pasta Pasta 台北京站店",
+      "country": "義大利",
+      "address": "台北市大同區承德路一段1號4樓（京站時尚廣場）",
+      "lat": 25.0493,
+      "lng": 121.5172,
+      "coordinateAccuracy": "approximate",
+      "sourceIds": [
+        "bellini-store",
+        "bellini-menu",
+        "q-restaurants"
+      ],
+      "note": "義式料理風格分類；品項參考分店公開紀錄，現行菜名及供應可能調整。"
+    },
+    {
+      "id": "ootoya",
+      "name": "大戶屋 京站店",
+      "country": "日本",
+      "address": "台北市大同區承德路一段1號B3（京站時尚廣場）",
+      "lat": 25.0493,
+      "lng": 121.5172,
+      "coordinateAccuracy": "approximate",
+      "sourceIds": [
+        "ootoya-store",
+        "ootoya-menu",
+        "q-restaurants"
+      ],
+      "note": "品項參考台灣品牌現行菜單，京站分店供應待確認。"
+    },
+    {
+      "id": "snow",
+      "name": "雪嶽山 京站店",
+      "country": "韓國",
+      "address": "台北市大同區承德路一段1號B3（京站時尚廣場）",
+      "lat": 25.0493,
+      "lng": 121.5172,
+      "coordinateAccuracy": "approximate",
+      "sourceIds": [
+        "snow-store",
+        "snow-menu",
+        "snow-sea",
+        "snow-soy",
+        "snow-beef",
+        "q-foodcourt"
+      ],
+      "note": "京站現行官方名錄仍列雪嶽山；餐點改採品牌其他分店2013、2020、2023年公開紀錄，京站當日菜單與供應待確認。原京站Uber Eats頁已停止平台外送，未用作現行供應證據。"
+    },
+    {
+      "id": "india",
+      "name": "印度風 京站店",
+      "country": "印度",
+      "address": "台北市大同區承德路一段1號B3（京站時尚廣場）",
+      "lat": 25.0493,
+      "lng": 121.5172,
+      "coordinateAccuracy": "approximate",
+      "sourceIds": [
+        "india-store",
+        "india-menu",
+        "q-foodcourt"
+      ],
+      "note": "印度風味咖哩與烤餅；蔬菜咖哩非自動等於全素，湯底與蛋奶請詢問店家。"
+    },
+    {
+      "id": "duan",
+      "name": "段純貞 京站店",
+      "country": "台灣",
+      "address": "台北市大同區承德路一段1號B3（京站時尚廣場）",
+      "lat": 25.0493,
+      "lng": 121.5172,
+      "coordinateAccuracy": "approximate",
+      "sourceIds": [
+        "duan-store",
+        "q-foodcourt"
+      ],
+      "note": "台灣品牌重慶風味牛肉麵；此庫依台灣牛肉麵分類。"
+    },
+    {
+      "id": "anzu",
+      "name": "銀座杏子日式豬排 京站店",
+      "country": "日本",
+      "address": "台北市大同區承德路一段1號4樓（京站時尚廣場）",
+      "lat": 25.0493,
+      "lng": 121.5172,
+      "coordinateAccuracy": "approximate",
+      "sourceIds": [
+        "anzu-store",
+        "anzu-menu",
+        "q-restaurants"
+      ],
+      "note": "品項參考品牌官方經典豬排，京站分店供應待確認。"
+    },
+    {
+      "id": "momo",
+      "name": "Mo-Mo-Paradise 台北京站牧場",
+      "country": "日本",
+      "address": "台北市大同區承德路一段1號4樓（京站時尚廣場）",
+      "lat": 25.0493,
+      "lng": 121.5172,
+      "coordinateAccuracy": "approximate",
+      "sourceIds": [
+        "momo-store",
+        "momo-menu",
+        "q-restaurants"
+      ],
+      "note": "吃到飽鍋物；牛肉、豬肉為可選肉品組合，並非兩份單獨販售套餐，請向店家確認湯底與方案。"
+    },
+    {
+      "id": "tenki",
+      "name": "天吉屋 台北京站店",
+      "country": "日本",
+      "address": "台北市大同區承德路一段1號1樓（京站時尚廣場）",
+      "lat": 25.0493,
+      "lng": 121.5172,
+      "coordinateAccuracy": "approximate",
+      "sourceIds": [
+        "tenki-store",
+        "tenki-menu",
+        "q-restaurants"
+      ],
+      "note": "品項參考品牌餐點紀錄，分店現行組合及供應待確認。"
+    },
+    {
+      "id": "nanmen",
+      "name": "小南門傳統豆花 京站店",
+      "country": "台灣",
+      "address": "台北市大同區承德路一段1號B3（京站時尚廣場）",
+      "lat": 25.0493,
+      "lng": 121.5172,
+      "coordinateAccuracy": "approximate",
+      "sourceIds": [
+        "nanmen",
+        "q-foodcourt"
+      ],
+      "note": "分店位置依公開地址整理；餐點參考所列來源，當日供應請洽店家。"
+    },
+    {
+      "id": "kyoto",
+      "name": "京都勝牛 京站店",
+      "country": "日本",
+      "address": "台北市大同區承德路一段1號B3（京站時尚廣場）",
+      "lat": 25.0493,
+      "lng": 121.5172,
+      "coordinateAccuracy": "approximate",
+      "sourceIds": [
+        "kyoto-store",
+        "kyoto-menu",
+        "q-restaurants"
+      ],
+      "note": "分店位置依公開地址整理；餐點參考所列來源，當日供應請洽店家。"
+    },
+    {
+      "id": "vegan",
+      "name": "Vegan Amore 蔬慕 京站店",
+      "country": "台灣",
+      "address": "台北市大同區承德路一段1號3樓（京站時尚廣場）",
+      "lat": 25.0493,
+      "lng": 121.5172,
+      "coordinateAccuracy": "approximate",
+      "sourceIds": [
+        "vegan-store",
+        "vegan-menu",
+        "q-restaurants"
+      ],
+      "note": "台灣在地食材結合異國蔬食料理，植物性漢堡與佛陀碗為品牌公開類型；實際組合請洽店家。"
+    },
+    {
+      "id": "kaifun",
+      "name": "開飯川食堂 京站店",
+      "country": "中國",
+      "address": "台北市大同區承德路一段1號B3（京站時尚廣場）",
+      "lat": 25.0493,
+      "lng": 121.5172,
+      "coordinateAccuracy": "approximate",
+      "sourceIds": [
+        "kaifun-store",
+        "kaifun-top",
+        "kaifun-main",
+        "q-restaurants"
+      ],
+      "note": "地域依四川料理風格分類；品項參考品牌現行菜單，京站分店供應待確認。"
+    },
+    {
+      "id": "jinzhu",
+      "name": "真珠台灣佳味 京站店",
+      "country": "台灣",
+      "address": "台北市大同區承德路一段1號B3（京站時尚廣場）",
+      "lat": 25.0493,
+      "lng": 121.5172,
+      "coordinateAccuracy": "approximate",
+      "sourceIds": [
+        "jin-store",
+        "jin-menu",
+        "q-restaurants"
+      ],
+      "note": "品項參考品牌現行菜單，京站分店供應待確認。"
+    }
+  ],
+  "foods": [
+    {
+      "id": "f001",
+      "name": "清燉牛肉麵",
+      "restaurantId": "liu",
+      "country": "台灣",
+      "staples": [
+        "麵"
+      ],
+      "proteins": [
+        "牛肉"
+      ],
+      "tags": [
+        "湯麵",
+        "清燉",
+        "牛肉麵"
+      ],
+      "description": "牛肉搭配清燉湯頭與麵條，適合偏好湯麵的人。",
+      "sourceIds": [
+        "liu-menu"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f002",
+      "name": "紅燒牛肉麵",
+      "restaurantId": "liu",
+      "country": "台灣",
+      "staples": [
+        "麵"
+      ],
+      "proteins": [
+        "牛肉"
+      ],
+      "tags": [
+        "湯麵",
+        "紅燒",
+        "牛肉麵"
+      ],
+      "description": "紅燒湯底搭配牛肉與麵條，想吃濃郁風味時可參考。",
+      "sourceIds": [
+        "liu-menu"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f003",
+      "name": "魯肉飯",
+      "restaurantId": "dadaocheng",
+      "country": "台灣",
+      "staples": [
+        "飯"
+      ],
+      "proteins": [
+        "豬肉"
+      ],
+      "tags": [
+        "台式",
+        "滷味"
+      ],
+      "description": "以豬肉滷汁搭配白飯的台式小吃。",
+      "sourceIds": [
+        "da-menu",
+        "da-order"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f004",
+      "name": "控肉飯",
+      "restaurantId": "dadaocheng",
+      "country": "台灣",
+      "staples": [
+        "飯"
+      ],
+      "proteins": [
+        "豬肉"
+      ],
+      "tags": [
+        "台式",
+        "滷味"
+      ],
+      "description": "喜歡大塊滷豬肉與白飯的人可參考。",
+      "sourceIds": [
+        "da-menu",
+        "da-order"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f005",
+      "name": "金針排骨湯",
+      "restaurantId": "dadaocheng",
+      "country": "台灣",
+      "staples": [
+        "其他"
+      ],
+      "proteins": [
+        "豬肉"
+      ],
+      "tags": [
+        "湯品",
+        "金針"
+      ],
+      "description": "金針與排骨組成的湯品，可搭配飯類。",
+      "sourceIds": [
+        "da-menu",
+        "da-order"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f006",
+      "name": "腿庫飯",
+      "restaurantId": "dadaocheng",
+      "country": "台灣",
+      "staples": [
+        "飯"
+      ],
+      "proteins": [
+        "豬肉"
+      ],
+      "tags": [
+        "台式",
+        "滷味"
+      ],
+      "description": "以腿庫肉搭配白飯，與碎魯肉飯有不同口感。",
+      "sourceIds": [
+        "da-menu",
+        "da-order"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f007",
+      "name": "Q豬腳丁飯",
+      "restaurantId": "dadaocheng",
+      "country": "台灣",
+      "staples": [
+        "飯"
+      ],
+      "proteins": [
+        "豬肉"
+      ],
+      "tags": [
+        "台式",
+        "滷味"
+      ],
+      "description": "豬腳丁搭配白飯，適合偏好帶皮豬肉的食客。",
+      "sourceIds": [
+        "da-menu",
+        "da-order"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f008",
+      "name": "厚燒餅",
+      "restaurantId": "fuhang",
+      "country": "台灣",
+      "staples": [
+        "麵包"
+      ],
+      "proteins": [],
+      "tags": [
+        "早餐",
+        "燒餅"
+      ],
+      "description": "厚實的中式燒餅，可依喜好搭配其他早餐。",
+      "sourceIds": [
+        "fu-menu",
+        "fu-recent"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f009",
+      "name": "厚餅夾蛋",
+      "restaurantId": "fuhang",
+      "country": "台灣",
+      "staples": [
+        "麵包"
+      ],
+      "proteins": [
+        "蛋奶"
+      ],
+      "tags": [
+        "早餐",
+        "燒餅"
+      ],
+      "description": "厚燒餅內加入雞蛋的早餐組合。",
+      "sourceIds": [
+        "fu-menu",
+        "fu-recent"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f010",
+      "name": "蛋餅",
+      "restaurantId": "fuhang",
+      "country": "台灣",
+      "staples": [
+        "點心"
+      ],
+      "proteins": [
+        "蛋奶"
+      ],
+      "tags": [
+        "早餐"
+      ],
+      "description": "台式早餐常見的餅皮與雞蛋組合。",
+      "sourceIds": [
+        "fu-menu",
+        "fu-recent"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f011",
+      "name": "鹹飯糰",
+      "restaurantId": "fuhang",
+      "country": "台灣",
+      "staples": [
+        "飯"
+      ],
+      "proteins": [],
+      "tags": [
+        "早餐",
+        "飯糰"
+      ],
+      "description": "鹹口味飯糰；完整配料及是否含肉請洽店家。",
+      "sourceIds": [
+        "fu-menu",
+        "fu-recent"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f012",
+      "name": "蘿蔔絲酥餅",
+      "restaurantId": "fuhang",
+      "country": "台灣",
+      "staples": [
+        "點心"
+      ],
+      "proteins": [],
+      "tags": [
+        "早餐",
+        "酥餅"
+      ],
+      "description": "以蘿蔔絲為餡料的鹹酥餅，油脂來源請洽店家。",
+      "sourceIds": [
+        "fu-menu",
+        "fu-recent"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f013",
+      "name": "大腸麵線",
+      "restaurantId": "achung",
+      "country": "台灣",
+      "staples": [
+        "麵"
+      ],
+      "proteins": [
+        "豬肉",
+        "海鮮"
+      ],
+      "tags": [
+        "麵線",
+        "柴魚",
+        "小吃"
+      ],
+      "description": "細麵線搭配大腸，公開介紹亦提及柴魚風味湯底。",
+      "sourceIds": [
+        "chung"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f014",
+      "name": "小籠包",
+      "restaurantId": "dianshuilou",
+      "country": "中國",
+      "staples": [
+        "點心"
+      ],
+      "proteins": [
+        "豬肉"
+      ],
+      "tags": [
+        "江浙",
+        "蒸點"
+      ],
+      "description": "以薄皮包裹肉餡蒸製的江浙點心。",
+      "sourceIds": [
+        "dian-menu"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f015",
+      "name": "龍井蝦仁",
+      "restaurantId": "dianshuilou",
+      "country": "中國",
+      "staples": [
+        "其他"
+      ],
+      "proteins": [
+        "海鮮"
+      ],
+      "tags": [
+        "江浙",
+        "茶香"
+      ],
+      "description": "蝦仁與龍井茶風味結合的江浙料理。",
+      "sourceIds": [
+        "dian-menu"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f016",
+      "name": "紹興醉雞",
+      "restaurantId": "dianshuilou",
+      "country": "中國",
+      "staples": [
+        "其他"
+      ],
+      "proteins": [
+        "雞肉"
+      ],
+      "tags": [
+        "江浙",
+        "冷盤"
+      ],
+      "description": "以紹興酒風味呈現的雞肉冷盤。",
+      "sourceIds": [
+        "dian-menu"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f017",
+      "name": "薺菜鍋餅",
+      "restaurantId": "dianshuilou",
+      "country": "中國",
+      "staples": [
+        "點心"
+      ],
+      "proteins": [],
+      "tags": [
+        "江浙",
+        "煎餅"
+      ],
+      "description": "以薺菜風味為特色的鍋餅，完整餡料請詢問店家。",
+      "sourceIds": [
+        "dian-menu"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f018",
+      "name": "點水樓牛肉麵",
+      "restaurantId": "dianshuilou",
+      "country": "中國",
+      "staples": [
+        "麵"
+      ],
+      "proteins": [
+        "牛肉"
+      ],
+      "tags": [
+        "湯麵",
+        "牛肉麵"
+      ],
+      "description": "點水樓公開菜單紀錄中的牛肉湯麵。",
+      "sourceIds": [
+        "dian-menu"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f019",
+      "name": "吉豚豬排丼",
+      "restaurantId": "katsuya",
+      "country": "日本",
+      "staples": [
+        "飯"
+      ],
+      "proteins": [
+        "豬肉",
+        "蛋奶"
+      ],
+      "tags": [
+        "炸物",
+        "丼飯"
+      ],
+      "description": "日式炸豬排搭配白飯的丼飯。",
+      "sourceIds": [
+        "katsu-store",
+        "katsu-menu"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f020",
+      "name": "海老腰內豬排定食",
+      "restaurantId": "katsuya",
+      "country": "日本",
+      "staples": [
+        "飯"
+      ],
+      "proteins": [
+        "海鮮",
+        "豬肉"
+      ],
+      "tags": [
+        "炸物",
+        "定食"
+      ],
+      "description": "炸蝦與腰內豬排搭配的日式定食。",
+      "sourceIds": [
+        "katsu-store",
+        "katsu-menu"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f021",
+      "name": "豬排咖哩飯",
+      "restaurantId": "katsuya",
+      "country": "日本",
+      "staples": [
+        "飯"
+      ],
+      "proteins": [
+        "豬肉"
+      ],
+      "tags": [
+        "咖哩",
+        "炸物"
+      ],
+      "description": "日式咖哩與炸豬排搭配白飯。",
+      "sourceIds": [
+        "katsu-store",
+        "katsu-menu"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f022",
+      "name": "大麥克",
+      "restaurantId": "mcdonalds",
+      "country": "美國",
+      "staples": [
+        "麵包"
+      ],
+      "proteins": [
+        "牛肉",
+        "蛋奶"
+      ],
+      "tags": [
+        "漢堡",
+        "速食"
+      ],
+      "description": "牛肉漢堡，品項參考台灣品牌菜單。",
+      "sourceIds": [
+        "mc-menu"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f023",
+      "name": "麥香魚",
+      "restaurantId": "mcdonalds",
+      "country": "美國",
+      "staples": [
+        "麵包"
+      ],
+      "proteins": [
+        "海鮮",
+        "蛋奶"
+      ],
+      "tags": [
+        "漢堡",
+        "速食"
+      ],
+      "description": "魚排漢堡，可作為魚肉主食選項。",
+      "sourceIds": [
+        "mc-menu"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f024",
+      "name": "麥克鷄塊",
+      "restaurantId": "mcdonalds",
+      "country": "美國",
+      "staples": [
+        "點心"
+      ],
+      "proteins": [
+        "雞肉"
+      ],
+      "tags": [
+        "炸物",
+        "速食"
+      ],
+      "description": "雞肉製成的炸物點心，依品牌菜單供應。",
+      "sourceIds": [
+        "mc-menu"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f025",
+      "name": "蘋果派",
+      "restaurantId": "mcdonalds",
+      "country": "美國",
+      "staples": [
+        "點心"
+      ],
+      "proteins": [],
+      "tags": [
+        "甜點",
+        "速食"
+      ],
+      "description": "蘋果風味派點，分店供應依時段而異。",
+      "sourceIds": [
+        "mc-menu"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f026",
+      "name": "酥皮焗叉燒包",
+      "restaurantId": "timhowan",
+      "country": "香港",
+      "staples": [
+        "麵包",
+        "點心"
+      ],
+      "proteins": [
+        "豬肉",
+        "蛋奶"
+      ],
+      "tags": [
+        "港式",
+        "叉燒",
+        "烘焙"
+      ],
+      "description": "叉燒內餡搭配酥皮的港式點心。",
+      "sourceIds": [
+        "tim-menu",
+        "tim-store"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f027",
+      "name": "晶瑩鮮蝦餃",
+      "restaurantId": "timhowan",
+      "country": "香港",
+      "staples": [
+        "點心"
+      ],
+      "proteins": [
+        "海鮮"
+      ],
+      "tags": [
+        "港式",
+        "蒸點"
+      ],
+      "description": "鮮蝦內餡與薄皮的港式蒸點。",
+      "sourceIds": [
+        "tim-menu",
+        "tim-store"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f028",
+      "name": "鮮蝦燒賣皇",
+      "restaurantId": "timhowan",
+      "country": "香港",
+      "staples": [
+        "點心"
+      ],
+      "proteins": [
+        "海鮮",
+        "豬肉"
+      ],
+      "tags": [
+        "港式",
+        "蒸點"
+      ],
+      "description": "以鮮蝦與豬肉組合的燒賣。",
+      "sourceIds": [
+        "tim-menu",
+        "tim-store"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f029",
+      "name": "XO醬臘味炒飯",
+      "restaurantId": "timhowan",
+      "country": "香港",
+      "staples": [
+        "飯"
+      ],
+      "proteins": [
+        "豬肉",
+        "海鮮",
+        "蛋奶"
+      ],
+      "tags": [
+        "港式",
+        "炒飯"
+      ],
+      "description": "臘味與 XO 醬風味的炒飯，含海陸食材。",
+      "sourceIds": [
+        "tim-menu",
+        "tim-store"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f030",
+      "name": "鮮蝦腐皮卷",
+      "restaurantId": "timhowan",
+      "country": "香港",
+      "staples": [
+        "點心"
+      ],
+      "proteins": [
+        "海鮮"
+      ],
+      "tags": [
+        "港式",
+        "炸物"
+      ],
+      "description": "以腐皮包裹鮮蝦內餡的點心。",
+      "sourceIds": [
+        "tim-menu",
+        "tim-store"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f031",
+      "name": "韭王鮮蝦腸",
+      "restaurantId": "timhowan",
+      "country": "香港",
+      "staples": [
+        "點心"
+      ],
+      "proteins": [
+        "海鮮"
+      ],
+      "tags": [
+        "港式",
+        "腸粉"
+      ],
+      "description": "韭黃與鮮蝦搭配滑嫩腸粉皮。",
+      "sourceIds": [
+        "tim-menu",
+        "tim-store"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f032",
+      "name": "香茅魚餅",
+      "restaurantId": "apinara",
+      "country": "泰國",
+      "staples": [
+        "其他"
+      ],
+      "proteins": [
+        "海鮮"
+      ],
+      "tags": [
+        "泰式",
+        "香茅"
+      ],
+      "description": "帶香茅風味的泰式魚餅。",
+      "sourceIds": [
+        "api-menu"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f033",
+      "name": "泰南紅咖哩蟹肉米線",
+      "restaurantId": "apinara",
+      "country": "泰國",
+      "staples": [
+        "麵"
+      ],
+      "proteins": [
+        "海鮮"
+      ],
+      "tags": [
+        "泰式",
+        "咖哩",
+        "米線"
+      ],
+      "description": "紅咖哩與蟹肉搭配米線的泰南風味料理。",
+      "sourceIds": [
+        "api-menu"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f034",
+      "name": "泰東北烤牛舌",
+      "restaurantId": "apinara",
+      "country": "泰國",
+      "staples": [
+        "其他"
+      ],
+      "proteins": [
+        "牛肉"
+      ],
+      "tags": [
+        "泰式",
+        "燒烤"
+      ],
+      "description": "以烤牛舌呈現的泰東北風味料理。",
+      "sourceIds": [
+        "api-menu"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f035",
+      "name": "曼谷鴨肝臘腸炒飯",
+      "restaurantId": "apinara",
+      "country": "泰國",
+      "staples": [
+        "飯"
+      ],
+      "proteins": [
+        "豬肉"
+      ],
+      "tags": [
+        "泰式",
+        "炒飯",
+        "鴨肝"
+      ],
+      "description": "品牌公開的鴨肝與臘腸炒飯；含鴨肝，臘腸肉類請向店家確認。",
+      "sourceIds": [
+        "api-menu"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f036",
+      "name": "職人風奶油蛋黃培根麵",
+      "restaurantId": "bellini",
+      "country": "義大利",
+      "staples": [
+        "麵"
+      ],
+      "proteins": [
+        "豬肉",
+        "蛋奶"
+      ],
+      "tags": [
+        "義大利麵",
+        "奶油"
+      ],
+      "description": "培根、蛋黃與奶油風味的義大利麵。",
+      "sourceIds": [
+        "bellini-menu",
+        "bellini-recent"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f037",
+      "name": "和風柚子軟絲明太子麵",
+      "restaurantId": "bellini",
+      "country": "義大利",
+      "staples": [
+        "麵"
+      ],
+      "proteins": [
+        "海鮮"
+      ],
+      "tags": [
+        "義大利麵",
+        "明太子"
+      ],
+      "description": "柚子風味搭配軟絲與明太子的義大利麵。",
+      "sourceIds": [
+        "bellini-menu",
+        "bellini-recent"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f038",
+      "name": "漁夫風綜合海鮮番茄麵",
+      "restaurantId": "bellini",
+      "country": "義大利",
+      "staples": [
+        "麵"
+      ],
+      "proteins": [
+        "海鮮"
+      ],
+      "tags": [
+        "義大利麵",
+        "番茄"
+      ],
+      "description": "以綜合海鮮和番茄風味搭配麵條。",
+      "sourceIds": [
+        "bellini-menu",
+        "bellini-recent"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f039",
+      "name": "經典四種起司比薩",
+      "restaurantId": "bellini",
+      "country": "義大利",
+      "staples": [
+        "麵包"
+      ],
+      "proteins": [
+        "蛋奶"
+      ],
+      "tags": [
+        "比薩",
+        "起司"
+      ],
+      "description": "多種起司組合的義式比薩。",
+      "sourceIds": [
+        "bellini-menu",
+        "bellini-recent"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f040",
+      "name": "蒜香辣炒野菇時蔬鮮蝦",
+      "restaurantId": "bellini",
+      "country": "義大利",
+      "staples": [
+        "其他"
+      ],
+      "proteins": [
+        "海鮮"
+      ],
+      "tags": [
+        "蒜香",
+        "辣",
+        "前菜"
+      ],
+      "description": "鮮蝦與野菇蔬菜快炒，帶蒜香與辣味。",
+      "sourceIds": [
+        "bellini-menu",
+        "bellini-recent"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f041",
+      "name": "炭烤鯖魚定食",
+      "restaurantId": "ootoya",
+      "country": "日本",
+      "staples": [
+        "飯"
+      ],
+      "proteins": [
+        "海鮮"
+      ],
+      "tags": [
+        "定食",
+        "烤魚"
+      ],
+      "description": "鯖魚主菜與白飯搭配的日式定食。",
+      "sourceIds": [
+        "ootoya-menu"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f042",
+      "name": "牛肉壽喜燒定食",
+      "restaurantId": "ootoya",
+      "country": "日本",
+      "staples": [
+        "飯"
+      ],
+      "proteins": [
+        "牛肉",
+        "蛋奶"
+      ],
+      "tags": [
+        "定食",
+        "壽喜燒"
+      ],
+      "description": "牛肉壽喜燒搭配白飯的定食。",
+      "sourceIds": [
+        "ootoya-menu"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f043",
+      "name": "炭烤雞肉蛋蓋飯",
+      "restaurantId": "ootoya",
+      "country": "日本",
+      "staples": [
+        "飯"
+      ],
+      "proteins": [
+        "雞肉",
+        "蛋奶"
+      ],
+      "tags": [
+        "親子丼",
+        "丼飯"
+      ],
+      "description": "以炭烤雞肉與雞蛋搭配的日式蓋飯。",
+      "sourceIds": [
+        "ootoya-menu"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f044",
+      "name": "滑蛋豬排鍋定食",
+      "restaurantId": "ootoya",
+      "country": "日本",
+      "staples": [
+        "飯"
+      ],
+      "proteins": [
+        "豬肉",
+        "蛋奶"
+      ],
+      "tags": [
+        "定食",
+        "豬排"
+      ],
+      "description": "炸豬排與雞蛋呈現的鍋物定食。",
+      "sourceIds": [
+        "ootoya-menu"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f045",
+      "name": "雞肉蔬菜燴黑醋醬定食",
+      "restaurantId": "ootoya",
+      "country": "日本",
+      "staples": [
+        "飯"
+      ],
+      "proteins": [
+        "雞肉"
+      ],
+      "tags": [
+        "定食",
+        "黑醋"
+      ],
+      "description": "雞肉、蔬菜與黑醋醬結合的定食。",
+      "sourceIds": [
+        "ootoya-menu"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f046",
+      "name": "炭烤鹽麴松阪豬定食",
+      "restaurantId": "ootoya",
+      "country": "日本",
+      "staples": [
+        "飯"
+      ],
+      "proteins": [
+        "豬肉"
+      ],
+      "tags": [
+        "定食",
+        "炭烤"
+      ],
+      "description": "鹽麴調味松阪豬肉搭配白飯。",
+      "sourceIds": [
+        "ootoya-menu"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f047",
+      "name": "木盒蕎麥麵",
+      "restaurantId": "ootoya",
+      "country": "日本",
+      "staples": [
+        "麵"
+      ],
+      "proteins": [],
+      "tags": [
+        "蕎麥麵",
+        "冷麵"
+      ],
+      "description": "木盒盛裝的日式蕎麥麵，沾醬與湯底配方請洽店家。",
+      "sourceIds": [
+        "ootoya-menu"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f048",
+      "name": "烏龍湯麵",
+      "restaurantId": "ootoya",
+      "country": "日本",
+      "staples": [
+        "麵"
+      ],
+      "proteins": [],
+      "tags": [
+        "烏龍麵",
+        "湯麵"
+      ],
+      "description": "日式烏龍湯麵，完整湯底食材請洽店家。",
+      "sourceIds": [
+        "ootoya-menu"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f049",
+      "name": "炭烤鰻魚蓋飯",
+      "restaurantId": "ootoya",
+      "country": "日本",
+      "staples": [
+        "飯"
+      ],
+      "proteins": [
+        "海鮮"
+      ],
+      "tags": [
+        "丼飯",
+        "烤魚"
+      ],
+      "description": "炭烤鰻魚搭配米飯的蓋飯。",
+      "sourceIds": [
+        "ootoya-menu"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f050",
+      "name": "南瓜可樂餅",
+      "restaurantId": "ootoya",
+      "country": "日本",
+      "staples": [
+        "點心"
+      ],
+      "proteins": [],
+      "tags": [
+        "炸物",
+        "南瓜"
+      ],
+      "description": "以南瓜風味為主的可樂餅，蛋奶與油脂來源請洽店家。",
+      "sourceIds": [
+        "ootoya-menu"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f051",
+      "name": "泡菜烤肉石鍋拌飯",
+      "restaurantId": "snow",
+      "country": "韓國",
+      "staples": [
+        "飯"
+      ],
+      "proteins": [],
+      "tags": [
+        "韓式",
+        "泡菜",
+        "石鍋拌飯",
+        "辣"
+      ],
+      "description": "品牌其他分店曾公開供應泡菜與烤肉石鍋拌飯；肉類及京站當日供應請詢問店家。",
+      "sourceIds": [
+        "snow-store",
+        "snow-menu"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f052",
+      "name": "海鮮豆腐湯鍋飯",
+      "restaurantId": "snow",
+      "country": "韓國",
+      "staples": [
+        "飯"
+      ],
+      "proteins": [
+        "海鮮",
+        "豬肉",
+        "蛋奶"
+      ],
+      "tags": [
+        "韓式",
+        "湯鍋",
+        "豆腐"
+      ],
+      "description": "品牌其他分店公開紀錄的海鮮、豬肉與豆腐湯鍋搭配飯食；京站供應待確認。",
+      "sourceIds": [
+        "snow-store",
+        "snow-sea"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f053",
+      "name": "海鮮豆腐湯鍋麵",
+      "restaurantId": "snow",
+      "country": "韓國",
+      "staples": [
+        "麵"
+      ],
+      "proteins": [
+        "海鮮",
+        "豬肉",
+        "蛋奶"
+      ],
+      "tags": [
+        "韓式",
+        "湯麵",
+        "豆腐"
+      ],
+      "description": "品牌其他分店公開紀錄的海鮮豆腐湯鍋麵，亦含豬肉；京站供應待確認。",
+      "sourceIds": [
+        "snow-store",
+        "snow-sea"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f054",
+      "name": "大醬湯鍋麵",
+      "restaurantId": "snow",
+      "country": "韓國",
+      "staples": [
+        "麵"
+      ],
+      "proteins": [],
+      "tags": [
+        "韓式",
+        "大醬",
+        "湯麵"
+      ],
+      "description": "官方商場品牌DM記錄的大醬湯鍋麵；完整配料與京站供應待確認。",
+      "sourceIds": [
+        "snow-store",
+        "snow-soy"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f055",
+      "name": "辣牛肉湯鍋麵",
+      "restaurantId": "snow",
+      "country": "韓國",
+      "staples": [
+        "麵"
+      ],
+      "proteins": [
+        "牛肉"
+      ],
+      "tags": [
+        "韓式",
+        "辣",
+        "湯麵"
+      ],
+      "description": "官方商場品牌DM記錄的辣牛肉湯鍋麵；完整配料與京站供應待確認。",
+      "sourceIds": [
+        "snow-store",
+        "snow-beef"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f056",
+      "name": "手工印度烤餅",
+      "restaurantId": "india",
+      "country": "印度",
+      "staples": [
+        "麵包"
+      ],
+      "proteins": [],
+      "tags": [
+        "印度",
+        "烤餅"
+      ],
+      "description": "京站品牌介紹提及的手工印度風味烤餅。",
+      "sourceIds": [
+        "india-store",
+        "india-menu"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f057",
+      "name": "田園蔬菜咖哩飯",
+      "restaurantId": "india",
+      "country": "印度",
+      "staples": [
+        "飯"
+      ],
+      "proteins": [],
+      "tags": [
+        "印度",
+        "咖哩",
+        "蔬菜"
+      ],
+      "description": "以蔬菜搭配咖哩與米飯；是否全素須由店家確認。",
+      "sourceIds": [
+        "india-store",
+        "india-menu"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f058",
+      "name": "麻辣豆腐咖哩飯",
+      "restaurantId": "india",
+      "country": "印度",
+      "staples": [
+        "飯"
+      ],
+      "proteins": [],
+      "tags": [
+        "印度",
+        "咖哩",
+        "麻辣",
+        "豆腐"
+      ],
+      "description": "豆腐搭配麻辣咖哩與米飯；完整湯底請洽店家。",
+      "sourceIds": [
+        "india-store",
+        "india-menu"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f059",
+      "name": "重慶風味牛肉麵",
+      "restaurantId": "duan",
+      "country": "台灣",
+      "staples": [
+        "麵"
+      ],
+      "proteins": [
+        "牛肉"
+      ],
+      "tags": [
+        "牛肉麵",
+        "紅燒",
+        "麻辣"
+      ],
+      "description": "品牌以重慶風味熬製牛肉湯底；實際菜名以分店為準。",
+      "sourceIds": [
+        "duan-store"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f060",
+      "name": "厚切熟成里肌豬排",
+      "restaurantId": "anzu",
+      "country": "日本",
+      "staples": [
+        "飯"
+      ],
+      "proteins": [
+        "豬肉"
+      ],
+      "tags": [
+        "豬排",
+        "炸物",
+        "定食"
+      ],
+      "description": "熟成里肌豬排為主菜的日式餐點。",
+      "sourceIds": [
+        "anzu-menu"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f061",
+      "name": "熟成腰內豬排",
+      "restaurantId": "anzu",
+      "country": "日本",
+      "staples": [
+        "飯"
+      ],
+      "proteins": [
+        "豬肉"
+      ],
+      "tags": [
+        "豬排",
+        "炸物",
+        "定食"
+      ],
+      "description": "以腰內肉呈現的日式炸豬排餐點。",
+      "sourceIds": [
+        "anzu-menu"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f062",
+      "name": "生蒜熟成里肌豬排",
+      "restaurantId": "anzu",
+      "country": "日本",
+      "staples": [
+        "飯"
+      ],
+      "proteins": [
+        "豬肉"
+      ],
+      "tags": [
+        "豬排",
+        "蒜香",
+        "定食"
+      ],
+      "description": "熟成里肌豬排搭配生蒜風味。",
+      "sourceIds": [
+        "anzu-menu"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f063",
+      "name": "牛肉壽喜燒",
+      "restaurantId": "momo",
+      "country": "日本",
+      "staples": [
+        "其他"
+      ],
+      "proteins": [
+        "牛肉",
+        "蛋奶"
+      ],
+      "tags": [
+        "壽喜燒",
+        "火鍋",
+        "吃到飽"
+      ],
+      "description": "壽喜燒湯底搭配可選牛肉；這是鍋物與肉品組合。",
+      "sourceIds": [
+        "momo-store",
+        "momo-menu"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f064",
+      "name": "豬肉壽喜燒",
+      "restaurantId": "momo",
+      "country": "日本",
+      "staples": [
+        "其他"
+      ],
+      "proteins": [
+        "豬肉",
+        "蛋奶"
+      ],
+      "tags": [
+        "壽喜燒",
+        "火鍋",
+        "吃到飽"
+      ],
+      "description": "壽喜燒湯底搭配可選豬肉，方案及配料請洽店家。",
+      "sourceIds": [
+        "momo-store",
+        "momo-menu"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f065",
+      "name": "天吉丼",
+      "restaurantId": "tenki",
+      "country": "日本",
+      "staples": [
+        "飯"
+      ],
+      "proteins": [
+        "海鮮",
+        "蛋奶"
+      ],
+      "tags": [
+        "天婦羅",
+        "丼飯",
+        "炸物"
+      ],
+      "description": "以天婦羅搭配白飯的品牌招牌丼飯。",
+      "sourceIds": [
+        "tenki-store",
+        "tenki-menu"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f066",
+      "name": "天幕御食",
+      "restaurantId": "tenki",
+      "country": "日本",
+      "staples": [
+        "飯"
+      ],
+      "proteins": [
+        "海鮮"
+      ],
+      "tags": [
+        "天婦羅",
+        "定食",
+        "炸物"
+      ],
+      "description": "天婦羅與飯食的組合，公開紀錄提及多種吃法。",
+      "sourceIds": [
+        "tenki-store",
+        "tenki-menu"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f067",
+      "name": "海老天丼",
+      "restaurantId": "tenki",
+      "country": "日本",
+      "staples": [
+        "飯"
+      ],
+      "proteins": [
+        "海鮮"
+      ],
+      "tags": [
+        "天婦羅",
+        "丼飯",
+        "炸蝦"
+      ],
+      "description": "以炸蝦天婦羅為主角的日式丼飯。",
+      "sourceIds": [
+        "tenki-store",
+        "tenki-menu"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f068",
+      "name": "花生豆花",
+      "restaurantId": "nanmen",
+      "country": "台灣",
+      "staples": [
+        "點心"
+      ],
+      "proteins": [],
+      "tags": [
+        "豆花",
+        "甜點",
+        "花生"
+      ],
+      "description": "花生與豆花搭配的台式甜點，含花生。",
+      "sourceIds": [
+        "nanmen"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f069",
+      "name": "元祖炸牛排",
+      "restaurantId": "kyoto",
+      "country": "日本",
+      "staples": [
+        "飯"
+      ],
+      "proteins": [
+        "牛肉",
+        "蛋奶"
+      ],
+      "tags": [
+        "炸牛排",
+        "定食",
+        "炸物"
+      ],
+      "description": "日式炸牛排，可搭配店家的醬料與溫泉蛋。",
+      "sourceIds": [
+        "kyoto-store",
+        "kyoto-menu"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f070",
+      "name": "京都勝牛三味",
+      "restaurantId": "kyoto",
+      "country": "日本",
+      "staples": [
+        "飯"
+      ],
+      "proteins": [
+        "牛肉"
+      ],
+      "tags": [
+        "炸牛排",
+        "定食",
+        "炸物"
+      ],
+      "description": "多種牛肉部位組合的炸牛排定食。",
+      "sourceIds": [
+        "kyoto-store",
+        "kyoto-menu"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f071",
+      "name": "經典豚牛二味",
+      "restaurantId": "kyoto",
+      "country": "日本",
+      "staples": [
+        "飯"
+      ],
+      "proteins": [
+        "牛肉",
+        "豬肉"
+      ],
+      "tags": [
+        "炸牛排",
+        "豬排",
+        "定食"
+      ],
+      "description": "牛肉與豬腰內肉的雙拼選擇。",
+      "sourceIds": [
+        "kyoto-store",
+        "kyoto-menu"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f072",
+      "name": "植物肉未來漢堡",
+      "restaurantId": "vegan",
+      "country": "台灣",
+      "staples": [
+        "麵包"
+      ],
+      "proteins": [
+        "蔬食"
+      ],
+      "tags": [
+        "植物肉",
+        "漢堡",
+        "蔬食"
+      ],
+      "description": "京站官方介紹的植物肉漢堡類型，口味依現場菜單。",
+      "sourceIds": [
+        "vegan-store",
+        "vegan-menu"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f073",
+      "name": "佛陀碗",
+      "restaurantId": "vegan",
+      "country": "台灣",
+      "staples": [
+        "飯"
+      ],
+      "proteins": [
+        "蔬食"
+      ],
+      "tags": [
+        "穀物",
+        "蔬菜",
+        "蔬食"
+      ],
+      "description": "以穀物、蔬果及植物性蛋白質組合的餐碗類型。",
+      "sourceIds": [
+        "vegan-store",
+        "vegan-menu"
+      ],
+      "supplyStatus": "branch-menu"
+    },
+    {
+      "id": "f074",
+      "name": "流口水雞",
+      "restaurantId": "kaifun",
+      "country": "中國",
+      "staples": [
+        "其他"
+      ],
+      "proteins": [
+        "雞肉"
+      ],
+      "tags": [
+        "川菜",
+        "辣",
+        "冷盤"
+      ],
+      "description": "川味雞肉搭配芝麻與辣油風味，含花生。",
+      "sourceIds": [
+        "kaifun-top"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f075",
+      "name": "蔥爆牛肉",
+      "restaurantId": "kaifun",
+      "country": "中國",
+      "staples": [
+        "其他"
+      ],
+      "proteins": [
+        "牛肉"
+      ],
+      "tags": [
+        "川菜",
+        "熱炒",
+        "蔥香"
+      ],
+      "description": "牛肉與蔥段快炒，適合搭配米飯。",
+      "sourceIds": [
+        "kaifun-top"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f076",
+      "name": "梅干鹹燒白",
+      "restaurantId": "kaifun",
+      "country": "中國",
+      "staples": [
+        "其他"
+      ],
+      "proteins": [
+        "豬肉"
+      ],
+      "tags": [
+        "川菜",
+        "梅干菜"
+      ],
+      "description": "豬五花搭配梅干菜的川味料理。",
+      "sourceIds": [
+        "kaifun-top"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f077",
+      "name": "回甘酸菜魚",
+      "restaurantId": "kaifun",
+      "country": "中國",
+      "staples": [
+        "其他"
+      ],
+      "proteins": [
+        "海鮮",
+        "豬肉"
+      ],
+      "tags": [
+        "川菜",
+        "酸菜魚",
+        "辣"
+      ],
+      "description": "酸菜與魚片組合，官方菜單特別註明亦含豬肉。",
+      "sourceIds": [
+        "kaifun-top"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f078",
+      "name": "鍋巴蝦仁滋滋響",
+      "restaurantId": "kaifun",
+      "country": "中國",
+      "staples": [
+        "飯"
+      ],
+      "proteins": [
+        "海鮮"
+      ],
+      "tags": [
+        "川菜",
+        "鍋巴",
+        "蝦仁"
+      ],
+      "description": "蝦仁與茄汁搭配酥脆鍋巴。",
+      "sourceIds": [
+        "kaifun-top"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f079",
+      "name": "松阪豬攀水蓮",
+      "restaurantId": "kaifun",
+      "country": "中國",
+      "staples": [
+        "其他"
+      ],
+      "proteins": [
+        "豬肉"
+      ],
+      "tags": [
+        "川菜",
+        "熱炒",
+        "蔬菜"
+      ],
+      "description": "松阪豬肉與水蓮的熱炒組合。",
+      "sourceIds": [
+        "kaifun-top"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f080",
+      "name": "梅汁二弄雞",
+      "restaurantId": "kaifun",
+      "country": "中國",
+      "staples": [
+        "其他"
+      ],
+      "proteins": [
+        "雞肉"
+      ],
+      "tags": [
+        "川菜",
+        "梅子",
+        "炸物"
+      ],
+      "description": "雞肉與梅汁風味結合的料理。",
+      "sourceIds": [
+        "kaifun-top"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f081",
+      "name": "猴頭菇素干貝醬炒飯",
+      "restaurantId": "kaifun",
+      "country": "中國",
+      "staples": [
+        "飯"
+      ],
+      "proteins": [
+        "蔬食"
+      ],
+      "tags": [
+        "川菜",
+        "炒飯",
+        "蔬食"
+      ],
+      "description": "官方蔬食菜單中的猴頭菇炒飯，搭配素干貝醬。",
+      "sourceIds": [
+        "kaifun-main"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f082",
+      "name": "肉絲蝦仁蛋炒飯",
+      "restaurantId": "kaifun",
+      "country": "中國",
+      "staples": [
+        "飯"
+      ],
+      "proteins": [
+        "豬肉",
+        "海鮮",
+        "蛋奶"
+      ],
+      "tags": [
+        "川菜",
+        "炒飯"
+      ],
+      "description": "豬肉絲、蝦仁和雞蛋搭配米飯快炒。",
+      "sourceIds": [
+        "kaifun-main"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f083",
+      "name": "黑糖甜心糍粑",
+      "restaurantId": "kaifun",
+      "country": "中國",
+      "staples": [
+        "點心"
+      ],
+      "proteins": [],
+      "tags": [
+        "川菜",
+        "甜點",
+        "黑糖"
+      ],
+      "description": "糯米糍粑搭配黑糖與黃豆粉。",
+      "sourceIds": [
+        "kaifun-main"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f084",
+      "name": "真功夫炒米粉",
+      "restaurantId": "jinzhu",
+      "country": "台灣",
+      "staples": [
+        "麵"
+      ],
+      "proteins": [
+        "海鮮"
+      ],
+      "tags": [
+        "台式",
+        "米粉",
+        "熱炒"
+      ],
+      "description": "官方介紹提及以小蝦米爆香的炒米粉。",
+      "sourceIds": [
+        "jin-menu"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f085",
+      "name": "蒜蓉鮮蝦粄條",
+      "restaurantId": "jinzhu",
+      "country": "台灣",
+      "staples": [
+        "麵"
+      ],
+      "proteins": [
+        "海鮮"
+      ],
+      "tags": [
+        "台式",
+        "粄條",
+        "蒜香"
+      ],
+      "description": "鮮蝦、蒜蓉與粄條搭配的料理。",
+      "sourceIds": [
+        "jin-menu"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f086",
+      "name": "食光豬油拌飯",
+      "restaurantId": "jinzhu",
+      "country": "台灣",
+      "staples": [
+        "飯"
+      ],
+      "proteins": [
+        "豬肉"
+      ],
+      "tags": [
+        "台式",
+        "拌飯",
+        "油蔥"
+      ],
+      "description": "白飯搭配豬油、醬油與油蔥酥。",
+      "sourceIds": [
+        "jin-menu"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f087",
+      "name": "蜜棗燒排骨",
+      "restaurantId": "jinzhu",
+      "country": "台灣",
+      "staples": [
+        "其他"
+      ],
+      "proteins": [
+        "豬肉"
+      ],
+      "tags": [
+        "台式",
+        "排骨",
+        "蜜棗"
+      ],
+      "description": "豬排骨搭配蜜棗風味醬汁。",
+      "sourceIds": [
+        "jin-menu"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f088",
+      "name": "脆皮糖醋梅花肉",
+      "restaurantId": "jinzhu",
+      "country": "台灣",
+      "staples": [
+        "其他"
+      ],
+      "proteins": [
+        "豬肉"
+      ],
+      "tags": [
+        "台式",
+        "糖醋",
+        "熱炒"
+      ],
+      "description": "梅花豬肉以酥炸與糖醋風味呈現。",
+      "sourceIds": [
+        "jin-menu"
+      ],
+      "supplyStatus": "brand-menu"
+    },
+    {
+      "id": "f089",
+      "name": "真珠小炒",
+      "restaurantId": "jinzhu",
+      "country": "台灣",
+      "staples": [
+        "其他"
+      ],
+      "proteins": [
+        "豬肉",
+        "海鮮"
+      ],
+      "tags": [
+        "台式",
+        "熱炒",
+        "魷魚"
+      ],
+      "description": "豬五花、中卷與豆干組成的台式熱炒。",
+      "sourceIds": [
+        "jin-menu"
+      ],
+      "supplyStatus": "brand-menu"
+    }
+  ]
+}

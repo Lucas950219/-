@@ -1,0 +1,52 @@
+<!doctype html><html lang="zh-Hant"><meta charset="utf-8"><title>食在北車 · 推薦引擎測試</title><body><h1>推薦引擎測試</h1><pre id="output">測試中…</pre><script type="module">
+import {emptyFilters,parseIntent,createRetriever,haversine,summarize,buildPrompt,tokens} from '../engine.js';
+const checks=[];
+function check(name,condition){checks.push({name,pass:Boolean(condition)});}
+try{
+ const d=await(await fetch('../data/knowledge.json')).json(),r=createRetriever(d),base=emptyFilters();
+ check('至少 50 種不同餐點',new Set(d.foods.map(f=>f.name)).size>=50);
+ check('至少 20 家店與 8 種料理',d.restaurants.length>=20&&new Set(d.foods.map(f=>f.country)).size>=8);
+ const ids=new Set(d.restaurants.map(x=>x.id)),sources=new Set(d.sources.map(x=>x.id));
+ check('餐點的餐廳與來源參照皆存在',d.foods.every(f=>ids.has(f.restaurantId)&&f.sourceIds.length&&f.sourceIds.every(id=>sources.has(id))));
+ check('每家店具地址、來源與約略座標',d.restaurants.every(x=>x.address&&x.sourceIds.length&&x.sourceIds.every(s=>sources.has(s))&&x.coordinateAccuracy==='approximate'&&Number.isFinite(x.lat)&&Number.isFinite(x.lng)));
+ check('所有來源使用 HTTPS',d.sources.every(x=>new URL(x.url).protocol==='https:'));
+ check('所有餐點具供應狀態',d.foods.every(f=>['branch-menu','brand-menu'].includes(f.supplyStatus)));
+ check('預設收錄全部餐廳',r(base).results.length===d.restaurants.length);
+ check('一般推薦問句不誤判為未知餐點',r(parseIntent('幫我推薦台北車站附近有什麼')).results.length===d.restaurants.length);
+ check('午餐美食推薦可直接使用',r(parseIntent('推薦附近美食')).results.length===d.restaurants.length);
+ let p=parseIntent('想吃韓式料理，有飯，不吃牛肉');let found=r(p);
+ check('韓國／飯／排除牛正確解析',p.countries.join()==='韓國'&&p.staples.join()==='飯'&&!p.proteins.includes('牛肉')&&p.excludedProteins.includes('牛肉'));
+ check('韓國問句有真實可用結果',found.results.length>0);
+ check('硬條件不會被距離加權覆蓋',found.chunks.every(x=>x.food.country==='韓國'&&x.food.staples.includes('飯')&&!x.food.proteins.includes('牛肉')));
+ p=parseIntent('不要豬肉',p);check('追問保留料理與原本的排除條件',p.countries.includes('韓國')&&p.excludedProteins.includes('牛肉')&&p.excludedProteins.includes('豬肉'));
+ p=parseIntent('不吃牛肉和豬肉');check('支援並列排除食材',p.excludedProteins.includes('牛肉')&&p.excludedProteins.includes('豬肉')&&!p.proteins.length);
+ found=r(p);check('排除食材不納入未知主要食材',found.chunks.every(x=>x.food.proteins.length&&!x.food.proteins.includes('牛肉')&&!x.food.proteins.includes('豬肉')));
+ p=parseIntent('500公尺內的日本豬排飯');check('500公尺與日本豬排飯正確解析',p.radius===500&&p.countries.includes('日本')&&p.staples.includes('飯')&&p.proteins.includes('豬肉'));
+ check('搜尋結果在半徑內',r(p).results.every(x=>x.distance<=500));
+ check('km 小數單位',parseIntent('1.5 km內').radius===1500);
+ check('中文一公里',parseIntent('一公里內').radius===1000);
+ check('麵包不誤當麵',parseIntent('想吃麵包').staples.join()==='麵包');
+ check('距離優先調高權重',parseIntent('近一點').weight===75);
+ check('口味優先移除距離權重',parseIntent('不在意距離').weight===0);
+ check('未知料理不補不符店家',r(parseIntent('墨西哥料理')).results.length===0);
+ check('知識庫外問題不亂推薦',r(parseIntent('量子糾纏原理')).results.length===0);
+ check('過小半徑不擅自放寬',r({...base,radius:1}).results.length===0);
+ const all=r(base);check('餐廳去重',new Set(all.results.map(x=>x.restaurant.id)).size===all.results.length);
+ check('符合分數在0到1',all.chunks.every(x=>x.score>=0&&x.score<=1));
+ const byDistance=r(base,'distance').results;check('最近排序正確',byDistance.every((x,i)=>!i||x.distance>=byDistance[i-1].distance));
+ check('Haversine同點為零',haversine(d.center,d.center)===0);
+ check('Haversine距離正反一致',Math.abs(haversine(d.center,d.restaurants[0])-haversine(d.restaurants[0],d.center))<.001);
+ const synthetic={center:{lat:25,lng:121},restaurants:[{id:'near',name:'近店',country:'台灣',lat:25.0005,lng:121},{id:'far',name:'遠店',country:'台灣',lat:25.012,lng:121}],foods:[{id:'n',name:'牛肉湯麵',country:'台灣',restaurantId:'near',staples:['麵'],proteins:['牛肉'],tags:[],description:'湯麵'},{id:'f',name:'紅燒牛肉麵',country:'台灣',restaurantId:'far',staples:['麵'],proteins:['牛肉'],tags:['紅燒牛肉麵'],description:'紅燒牛肉麵'}]};
+ const sr=createRetriever(synthetic),sp=parseIntent('紅燒牛肉麵');
+ check('低距離權重優先文字相關度',sr({...sp,weight:0}).results[0].restaurant.id==='far');
+ check('提高距離權重確實改變推薦',sr({...sp,weight:80}).results[0].restaurant.id==='near');
+ const response=summarize(all,base);check('摘要標明直線與資料依據',response.includes('直線')&&response.includes(all.results[0].restaurant.name));
+ const messages=buildPrompt(all,'想吃什麼',base),context=JSON.parse(messages[1].content.split('以下為可引用的檢索結果：')[1].split('\n請用')[0]);
+ check('RAG prompt確實注入Top3真實資料',context.length===3&&context[0].restaurant===all.results[0].restaurant.name&&context[0].dish===all.results[0].food.name);
+ check('RAG prompt包含禁止虛構指示',messages[0].content.includes('不要編造'));
+ check('未知營業狀態會說明缺少資料',summarize(r(parseIntent('現在有開嗎')),parseIntent('現在有開嗎')).includes('無法確認'));
+ check('中英斷詞有輸出',tokens('牛肉麵 beef').includes('beef'));
+}catch(error){checks.push({name:error.stack,pass:false});}
+window.testResults={passed:checks.filter(x=>x.pass).length,total:checks.length,checks};
+document.getElementById('output').textContent=checks.map(x=>(x.pass?'PASS ':'FAIL ')+x.name).join('\n')+'\n\n'+window.testResults.passed+'/'+checks.length;
+</script></body></html>
