@@ -27,12 +27,12 @@ function renderResults(){
   current=retrieve(filters,$('#sort').value);
   const {results,matchedFoods}=current;
   $('#result-count').textContent=results.length+' 家';
-  $('#results-caption').textContent=`${matchedFoods} 種餐點符合條件 · 以台北車站為起點 · 直線距離`;
+  $('#results-caption').textContent=`${matchedFoods} 種餐點符合條件 · ${current.ranking.mode==='text'?'餐點關鍵字比對':'條件篩選'} · 直線距離`;
   const tags=[...filters.countries,...filters.staples,...filters.proteins,...filters.excludedProteins.map(x=>'排除'+x),...filters.excludedStaples.map(x=>'排除'+x)];
   $('#active-filters').innerHTML=tags.map(t=>`<span class="active-filter">${esc(t)}</span>`).join('')+(filters.query?`<button class="active-filter" id="clear-query" title="清除問句與搜尋條件">問句：${esc(filters.query.slice(0,25))} ×</button>`:'');
-  $('#results').innerHTML=results.length?results.slice(0,limit).map(card).join(''):`<div class="empty-state"><strong>換個條件，發現另一種好味道。</strong>目前 ${formatDistance(filters.radius)} 內沒有符合全部條件的餐點。<br>試試放寬距離或減少一項篩選。<br><button id="empty-reset">重設篩選條件</button></div>`;
+  $('#results').innerHTML=results.length?results.slice(0,limit).map(card).join(''):`<div class="empty-state"><strong>${current.ranking.rejectedForRelevance?'餐點關鍵字的相符資料不足。':'換個條件，發現另一種好味道。'}</strong>${current.ranking.rejectedForRelevance?'候選資料未通過相關度門檻，距離近也不會補進推薦。<br>試試其他菜名或料理關鍵字。':`目前 ${formatDistance(filters.radius)} 內沒有符合全部條件的餐點。<br>試試放寬距離或減少一項篩選。`}<br><button id="empty-reset">重設篩選條件</button></div>`;
   $('#load-more').hidden=results.length<=limit;
-  $('#formula').textContent=`綜合分數 = ${100-filters.weight}% × 相關度 + ${filters.weight}% × 距離分數。這是符合程度，不是店家評分。`;
+  $('#formula').textContent=`綜合分數 = 相關度 × (${100-filters.weight}% + ${filters.weight}% × 距離分數)。${current.ranking.mode==='text'?'相關度由 65% 關鍵字覆蓋率與 35% 原始餘弦相似度組成，先通過門檻才排序。':'本次未指定額外餐點關鍵字，依已選條件篩選後，以距離調整順序。'}符合分數不是店家評分或機率。`;
   if(!$('#map-panel').hidden)renderMap();
 }
 function render(){renderFilters();renderResults();updateFavoriteCount();}
@@ -77,7 +77,7 @@ function addTrace(answer,result,snapshot){
   const citations=document.createElement('div');citations.className='answer-citations';
   citations.innerHTML=references.map((r,i)=>{const s=data.sources.find(s=>s.id===r.food.sourceIds[0]);return s?`<a href="${esc(safeURL(s.url))}" target="_blank" rel="noopener noreferrer">[${i+1}] ${esc(r.restaurant.name)} ↗</a>`:'';}).join('');answer.append(citations);
   const details=document.createElement('details');details.className='retrieval-trace';
-  details.innerHTML=`<summary>查看本次檢索依據 · ${references.length} 個片段</summary><p>中文雙字 TF-IDF／餘弦相似度＋結構條件＋${snapshot.weight}% 距離權重。以下為實際進入回答的資料。</p>`+references.map(r=>`<div class="trace-row">${esc(r.food.name)} · ${esc(r.restaurant.name)}<br>文字相似度 ${r.similarity.toFixed(3)} · 直線 ${formatDistance(r.distance)} · 綜合 ${Math.round(r.score*100)} 分<br>${sourceLinks(r.food.sourceIds,true)}</div>`).join('');answer.append(details);
+  details.innerHTML=`<summary>查看本次檢索依據 · ${references.length} 個片段</summary><p>${result.ranking.mode==='text'?'別名正規化後，以中文單字／雙字 TF-IDF 檢索額外餐點關鍵字；覆蓋率至少 60%、原始餘弦相似度至少 0.04 才列入推薦。':'本次是條件篩選，未指定額外餐點關鍵字，不以文字相似度充當符合依據。'}距離權重 ${snapshot.weight}%，只調整符合資料的排序。${result.ranking.rejectedForRelevance?`已排除 ${result.ranking.rejectedForRelevance} 筆相關度不足的候選餐點。`:''}</p>`+references.map(r=>`<div class="trace-row">${esc(r.food.name)} · ${esc(r.restaurant.name)}<br>${r.matchMode==='text'?`餐點關鍵字相似度 ${r.focusSimilarity.toFixed(3)} · 覆蓋率 ${Math.round(r.coverage*100)}%`:'已符合分類與食材條件'} · 直線 ${formatDistance(r.distance)} · 綜合 ${Math.round(r.score*100)} 分<br>${sourceLinks(r.food.sourceIds,true)}</div>`).join('');answer.append(details);
 }
 async function ask(question,fresh=false){
   if(!data||questionBusy)return;

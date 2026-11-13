@@ -36,7 +36,7 @@ try{
  const byDistance=r(base,'distance').results;check('最近排序正確',byDistance.every((x,i)=>!i||x.distance>=byDistance[i-1].distance));
  check('Haversine同點為零',haversine(d.center,d.center)===0);
  check('Haversine距離正反一致',Math.abs(haversine(d.center,d.restaurants[0])-haversine(d.restaurants[0],d.center))<.001);
- const synthetic={center:{lat:25,lng:121},restaurants:[{id:'near',name:'近店',country:'台灣',lat:25.0005,lng:121},{id:'far',name:'遠店',country:'台灣',lat:25.012,lng:121}],foods:[{id:'n',name:'牛肉湯麵',country:'台灣',restaurantId:'near',staples:['麵'],proteins:['牛肉'],tags:[],description:'湯麵'},{id:'f',name:'紅燒牛肉麵',country:'台灣',restaurantId:'far',staples:['麵'],proteins:['牛肉'],tags:['紅燒牛肉麵'],description:'紅燒牛肉麵'}]};
+ const synthetic={center:{lat:25,lng:121},restaurants:[{id:'near',name:'近店',country:'台灣',lat:25.0005,lng:121},{id:'far',name:'遠店',country:'台灣',lat:25.012,lng:121}],foods:[{id:'n',name:'紅燒牛肉湯麵',country:'台灣',restaurantId:'near',staples:['麵'],proteins:['牛肉'],tags:[],description:'湯麵'},{id:'f',name:'紅燒牛肉麵',country:'台灣',restaurantId:'far',staples:['麵'],proteins:['牛肉'],tags:['紅燒牛肉麵'],description:'紅燒牛肉麵'},{id:'unrelated',name:'清燉牛肉麵',country:'台灣',restaurantId:'near',staples:['麵'],proteins:['牛肉'],tags:['清燉'],description:'清燉湯麵'}]};
  const sr=createRetriever(synthetic),sp=parseIntent('紅燒牛肉麵');
  check('低距離權重優先文字相關度',sr({...sp,weight:0}).results[0].restaurant.id==='far');
  check('提高距離權重確實改變推薦',sr({...sp,weight:80}).results[0].restaurant.id==='near');
@@ -45,7 +45,28 @@ try{
  check('RAG prompt確實注入Top3真實資料',context.length===3&&context[0].restaurant===all.results[0].restaurant.name&&context[0].dish===all.results[0].food.name);
  check('RAG prompt包含禁止虛構指示',messages[0].content.includes('不要編造'));
  check('未知營業狀態會說明缺少資料',summarize(r(parseIntent('現在有開嗎')),parseIntent('現在有開嗎')).includes('無法確認'));
- check('中英斷詞有輸出',tokens('牛肉麵 beef').includes('beef'));
+ check('英文別名與中文可比對',tokens('beef noodles').join()===tokens('牛肉 麵').join());
+ const english=r(parseIntent('beef noodles'));check('英文牛肉麵檢索不再出現全零相似度',english.results.length>0&&english.chunks.every(x=>x.similarity>0&&x.food.staples.includes('麵')&&x.food.proteins.includes('牛肉')));
+ const missing=r(parseIntent('韓國鰻魚飯'));check('共同分類不能讓不相干菜名通過',missing.results.length===0&&missing.ranking.rejectedForRelevance>0);
+ check('提高距離權重不能救回不相關菜名',r({...parseIntent('韓國鰻魚飯'),weight:80}).results.length===0);
+ check('低相似度不會強制灌成滿分',r(parseIntent('日本鰻魚飯')).chunks.every(x=>x.relevance<1&&x.score<=x.relevance));
+ const eel=r(parseIntent('日本鰻魚飯'));check('確實有收錄的特定菜名仍可找到',eel.results.length===1&&eel.results[0].food.name.includes('鰻魚'));
+ check('韓式起司鍋缺少資料時拒絕補位',r(parseIntent('韓式起司鍋')).results.length===0);
+ const red=r(parseIntent('台灣紅燒牛肉麵'));check('紅燒需求排除清燉近店',red.results.length>0&&red.chunks.every(x=>!x.food.name.includes('清燉')));
+ const pizza=r(parseIntent('pizza'));check('披薩與比薩別名可找到真實品項',pizza.results.some(x=>x.food.name.includes('比薩')));
+ const ramen=parseIntent('韓式拉麵');check('菜名不會擅自擴張料理國家',ramen.countries.join()==='韓國');
+ check('條件查詢與文字檢索有明確區分',r(parseIntent('韓式料理有飯')).ranking.mode==='filters'&&red.ranking.mode==='text');
+ check('未命中摘要會說明相關資料不足',summarize(missing,parseIntent('韓國鰻魚飯')).includes('不會因為餐廳距離近'));
+ check('每個文字候選都獨立通過門檻',red.chunks.every(x=>x.focusSimilarity>=red.ranking.minimumSimilarity&&x.coverage>=red.ranking.minimumCoverage));
+ check('最大距離權重也不收錄清燉假命中',sr({...sp,weight:80}).chunks.every(x=>x.food.id!=='unrelated'));
+ const exactNames=d.foods.filter(f=>r(parseIntent(f.name)).results.some(x=>x.matches.some(v=>v.id===f.id)));
+ check('知識庫89個原始菜名都能找回對應餐點',exactNames.length===d.foods.length);
+ check('菜名有蔬菜不會擅自宣稱蔬食',!parseIntent('田園蔬菜咖哩飯').proteins.includes('蔬食'));
+ check('牛排需求不會誤排除附飯的餐點',r(parseIntent('元祖炸牛排')).results.some(x=>x.food.name==='元祖炸牛排'));
+ check('素食與蔬食名稱可找到已標註的餐點',r(parseIntent('想吃素食')).results.length>0&&r(parseIntent('想吃素食')).chunks.every(x=>x.food.proteins.includes('蔬食')));
+ check('炸蝦丼能組合比對炸蝦與丼飯標籤',r(parseIntent('炸蝦丼')).results.some(x=>x.food.name.includes('海老天丼')));
+ check('車站距離敘述不誤當菜名',r(parseIntent('我想要離車站近一點的日本料理')).ranking.mode==='filters'&&r(parseIntent('我想要離車站近一點的日本料理')).results.length>0);
+ window.rankingExamples=['韓國鰻魚飯','韓式起司鍋','beef noodles','想吃素食','想吃韓式飯類','炸蝦丼','義大利cheese pizza','我想吃紅燒的牛肉麵','推薦牛排','想吃親子丼','我想要離車站近一點的日本料理'].map(query=>{const v=r(parseIntent(query));return{query,mode:v.ranking.mode,focus:v.ranking.focusQuery,results:v.results.slice(0,3).map(x=>({name:x.food.name,similarity:x.focusSimilarity,coverage:x.coverage,score:x.score}))};});
 }catch(error){checks.push({name:error.stack,pass:false});}
 window.testResults={passed:checks.filter(x=>x.pass).length,total:checks.length,checks};
 document.getElementById('output').textContent=checks.map(x=>(x.pass?'PASS ':'FAIL ')+x.name).join('\n')+'\n\n'+window.testResults.passed+'/'+checks.length;
