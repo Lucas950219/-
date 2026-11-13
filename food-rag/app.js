@@ -36,7 +36,7 @@ function renderResults(){
   if(!$('#map-panel').hidden)renderMap();
 }
 function render(){renderFilters();renderResults();updateFavoriteCount();}
-function reset(){filters=emptyFilters();limit=8;$('#question').value='';render();}
+function reset(){filters=emptyFilters();limit=8;$('#question').value='';$('#chat-history').replaceChildren();render();}
 function updateFavoriteCount(){$('#favorite-count').textContent=favorites.size;}
 function renderFavorites(){
   const all=retrieve({...emptyFilters(),radius:10000}).results.filter(r=>favorites.has(r.restaurant.id));
@@ -91,7 +91,7 @@ async function ask(question,fresh=false){
   const answer=document.createElement('div');answer.className='chat-answer';
   const label=document.createElement('h3');label.textContent=engine?'✦ AI 正在根據檢索資料整理回答…':'✧ 根據美食知識庫的檢索摘要';answer.append(label);
   const body=document.createElement('div');body.textContent=summarize(result,snapshot);answer.append(body);message.append(answer);
-  $('#chat-history').append(message);while($('#chat-history').children.length>5)$('#chat-history').firstElementChild.remove();
+  $('#chat-history').replaceChildren(message);
   $('#question').value='';
   try{
     if(engine&&result.results.length){
