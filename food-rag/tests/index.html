@@ -61,6 +61,20 @@ try{
  const flavorDish=r(parseIntent('500公尺內想吃台灣口味重的麵，不吃牛肉'));
  check('重口味可和料理、主食、食材限制及半徑一起使用',flavorDish.results.length>0&&flavorDish.results.every(x=>x.food.country==='台灣'&&x.food.staples.includes('麵')&&!x.food.proteins.includes('牛肉')&&x.distance<=500));
  check('重口味搜尋保留明確菜名的相關度門檻',r(parseIntent('重口味的鰻魚飯')).results.length===0);
+ const lightIntent=parseIntent('我想吃口味淡的食物'),light=r(lightIntent);
+ check('口味淡依烹調線索命中並交代調味限制',light.results.length>1&&light.results.every(x=>x.flavorEvidence.length>0)&&summarize(light,lightIntent).includes('以店家說明為準'));
+ check('清爽的料理與口味淡使用相同風味條件',r(parseIntent('清爽的料理')).matchedFoods===light.matchedFoods);
+ check('清淡可與麵類結合',r(parseIntent('想吃清淡的麵')).results.some(x=>x.food.name==='清燉牛肉麵'));
+ const sweets=r(parseIntent('想吃甜的'));
+ check('甜味需求找到甜點',sweets.results.length>0&&sweets.results.every(x=>x.food.tags.includes('甜點')));
+ check('酸酸甜甜可找到糖醋菜',r(parseIntent('求酸酸甜甜的菜')).results.some(x=>x.food.tags.includes('糖醋')));
+ check('查無價格的純預算問句不推薦未證實價格的餐廳',r(parseIntent('200元內的晚餐')).results.length===0);
+ for(const [question,field] of [['想吃少油的麵','用油量'],['低鹽牛肉麵','鹽分'],['不用排隊的小籠包','排隊時間'],['可以外帶的小籠包','外帶']]){
+   const intent=parseIntent(question),found=r(intent);
+   check(question+'保留可查餐點並揭露資料缺口',found.results.length>0&&summarize(found,intent).includes('沒有'+field+'資料'));
+ }
+ const lightPrompt=buildPrompt(light,'我想吃清淡的食物',lightIntent)[1].content;
+ check('AI 提示詞要求比較選項並提供餐點風味與主食',lightPrompt.includes('比較最多兩個備選')&&lightPrompt.includes('flavorEvidence')&&lightPrompt.includes('staples'));
  check('英文別名與中文可比對',tokens('beef noodles').join()===tokens('牛肉 麵').join());
  const english=r(parseIntent('beef noodles'));check('英文牛肉麵檢索不再出現全零相似度',english.results.length>0&&english.chunks.every(x=>x.similarity>0&&x.food.staples.includes('麵')&&x.food.proteins.includes('牛肉')));
  const missing=r(parseIntent('韓國鰻魚飯'));check('共同分類不能讓不相干菜名通過',missing.results.length===0&&missing.ranking.rejectedForRelevance>0);
