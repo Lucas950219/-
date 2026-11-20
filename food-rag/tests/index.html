@@ -52,6 +52,15 @@ try{
    check(question+' 會說明缺少的欄位',summarize(found,intent).includes('沒有'+field+'資料'));
  }
  check('只問營業時間不會收到無關的餐廳',r(parseIntent('現在有開嗎')).results.length===0);
+ const strongIntent=parseIntent('我想吃口味重的食物'),strong=r(strongIntent);
+ check('口味重會依實際風味資料推薦',strong.results.length>1&&strong.results.every(x=>x.flavorEvidence.length>0)&&summarize(strong,strongIntent).includes('風味依據'));
+ check('同義風味問句找到相同餐點',r(parseIntent('想吃味道濃一點的菜')).matchedFoods===strong.matchedFoods);
+ const noSpicy=r(parseIntent('想吃重口味但不辣的食物'));
+ check('重口味但不辣仍有蒜香或濃郁的選擇',noSpicy.results.length>0&&noSpicy.results.every(x=>x.flavorEvidence.every(tag=>['蒜香','濃郁'].includes(tag))));
+ check('否定重口味不會反向推薦',r(parseIntent('不要太重口味')).results.every(x=>!x.flavorEvidence.length));
+ const flavorDish=r(parseIntent('500公尺內想吃台灣口味重的麵，不吃牛肉'));
+ check('重口味可和料理、主食、食材限制及半徑一起使用',flavorDish.results.length>0&&flavorDish.results.every(x=>x.food.country==='台灣'&&x.food.staples.includes('麵')&&!x.food.proteins.includes('牛肉')&&x.distance<=500));
+ check('重口味搜尋保留明確菜名的相關度門檻',r(parseIntent('重口味的鰻魚飯')).results.length===0);
  check('英文別名與中文可比對',tokens('beef noodles').join()===tokens('牛肉 麵').join());
  const english=r(parseIntent('beef noodles'));check('英文牛肉麵檢索不再出現全零相似度',english.results.length>0&&english.chunks.every(x=>x.similarity>0&&x.food.staples.includes('麵')&&x.food.proteins.includes('牛肉')));
  const missing=r(parseIntent('韓國鰻魚飯'));check('共同分類不能讓不相干菜名通過',missing.results.length===0&&missing.ranking.rejectedForRelevance>0);

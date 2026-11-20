@@ -1,4 +1,4 @@
-import {COUNTRY_INFO,emptyFilters,parseIntent,createRetriever,formatDistance,summarize,buildPrompt,informationNotice} from './engine.js';
+import {COUNTRY_INFO,emptyFilters,parseIntent,createRetriever,formatDistance,summarize,buildPrompt,informationNotice,flavorConditions} from './engine.js';
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const safeURL=url=>{try{const u=new URL(url);return u.protocol==='https:'?u.href:'#';}catch{return '#';}};
@@ -29,7 +29,7 @@ function renderResults(){
   const {results,matchedFoods}=current;
   $('#result-count').textContent=results.length+' 家';
   $('#results-caption').textContent=`${matchedFoods} 種餐點符合條件 · ${current.ranking.mode==='text'?'餐點關鍵字比對':'條件篩選'} · 直線距離`;
-  const tags=[...filters.countries,...filters.staples,...filters.proteins,...filters.excludedProteins.map(x=>'排除'+x),...filters.excludedStaples.map(x=>'排除'+x)];
+  const tags=[...filters.countries,...filters.staples,...filters.proteins,...filters.excludedProteins.map(x=>'排除'+x),...filters.excludedStaples.map(x=>'排除'+x),...flavorConditions(filters)];
   $('#active-filters').innerHTML=tags.map(t=>`<span class="active-filter">${esc(t)}</span>`).join('')+(filters.query?`<button class="active-filter" id="clear-query" title="清除問句與搜尋條件">問句：${esc(filters.query.slice(0,25))} ×</button>`:'');
   $('#results').innerHTML=results.length?results.slice(0,limit).map(card).join(''):`<div class="empty-state"><strong>${current.ranking.rejectedForRelevance?'餐點關鍵字的相符資料不足。':'換個條件，發現另一種好味道。'}</strong>${current.ranking.rejectedForRelevance?'候選資料未通過相關度門檻，距離近也不會補進推薦。<br>試試其他菜名或料理關鍵字。':`目前 ${formatDistance(filters.radius)} 內沒有符合全部條件的餐點。<br>試試放寬距離或減少一項篩選。`}<br><button id="empty-reset">重設篩選條件</button></div>`;
   $('#load-more').hidden=results.length<=limit;
