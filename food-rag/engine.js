@@ -16,6 +16,10 @@ export const COUNTRY_INFO = {
 const STAPLES = {'麵':['麵','麵條','烏龍','拉麵','河粉','noodle','pasta'], '飯':['飯','米飯','粥','rice'], '麵包':['麵包','漢堡','三明治','吐司','burger','bread'], '點心':['點心','小籠包','燒賣','餃','包子','甜點','蛋糕'], '其他':['其他主食']};
 const PROTEINS = {'牛肉':['牛肉','牛','beef'],'豬肉':['豬肉','豬','pork'],'雞肉':['雞肉','雞','chicken'],'海鮮':['海鮮','魚','蝦','蛤蜊','牡蠣','seafood'],'蔬食':['蔬食','素食','素的','vegetarian'],'蛋奶':['蛋奶','起司','雞蛋','乳酪']};
 const STOP = /推薦|附近|餐廳|料理|可以|想要|想吃|吃點|請問|有沒有|什麼|好吃|幫我|找找|今天|北車|台北車站|臺北車站|最近|近一點|一點|哪些|推薦我|不要|不吃|公里|公尺|距離|以內|以外|沒有|一公里|兩公里|三公里/gu;
+const INFORMATION_REQUESTS = [
+  ['價格', /(?:以及|和|跟|還有)?\s*(?:(?:一份|一籠|一顆)\s*)?(?:多少錢|多少元|賣多少|怎麼賣|價格(?:是多少)?|價錢(?:是多少)?|售價(?:是多少)?|價位)/gu],
+  ['營業時間', /(?:以及|和|跟|還有)?\s*(?:營業時間(?:是什麼時候|(?:是|從)?幾點(?:到幾點)?|到幾點)?|幾點(?:開始營業|結束營業|開門|關門|營業|開店|開|關|打烊)?|(?:現在|今天)(?:還有開|有營業|有開|還開著|開著)|什麼時候(?:開門|關門|營業|打烊)|開門時間|打烊時間)/gu]
+];
 export const emptyFilters = () => ({countries:[],staples:[],proteins:[],excludedProteins:[],excludedStaples:[],radius:2000,weight:25,query:''});
 export function normalize(text) {return String(text).toLowerCase().replaceAll('臺','台').replaceAll('麪','麵').replaceAll('滷','魯').replaceAll('鷄','雞').replaceAll('比薩','披薩').replaceAll('意大利','義大利');}
 const SEARCH_ALIASES = [
@@ -47,6 +51,13 @@ function hasAlias(text,aliases){return aliases.some(x=>text.includes(normalize(x
 export function parseIntent(question,base=emptyFilters()) {
   const result = {...base,countries:[...base.countries],staples:[...base.staples],proteins:[...base.proteins],excludedProteins:[...(base.excludedProteins||[])],excludedStaples:[...(base.excludedStaples||[])],query:question};
   let text=searchNormalize(question);
+  result.unavailableInformation=[];
+  for(const [label,phrase] of INFORMATION_REQUESTS){
+    text=text.replace(phrase,()=>{
+      if(!result.unavailableInformation.includes(label))result.unavailableInformation.push(label);
+      return ' ';
+    });
+  }
   text=text.replace(/(不吃|不要|不想吃|不含|不能吃|排除|避開|無)\s*(牛肉|豬肉|雞肉|海鮮|牛|豬|雞|麵|飯)(?:\s*(?:和|跟|及|、|或)\s*)(牛肉|豬肉|雞肉|海鮮|牛|豬|雞|麵|飯)/gu,'$1$2 $1$3');
   // Collect exclusions first so “不吃牛肉” never becomes a positive beef filter.
   for(const [group,excluded,dictionary] of [['proteins','excludedProteins',PROTEINS],['staples','excludedStaples',STAPLES]]) {
@@ -74,7 +85,7 @@ export function parseIntent(question,base=emptyFilters()) {
   if(/近一點|距離優先|走近|最近/.test(text)) result.weight=75;
   if(/不在意距離|口味優先/.test(text))result.weight=0;
   if(/全部|不限國家|各國/.test(text))result.countries=[];
-  // Remove negative phrases from sparse query while retaining the structured exclusions.
+  // Keep dish terms for retrieval and preserve the original question for the model.
   result.retrievalQuery=text;
   result.unsupported=/多少錢|價格|預算|幾點|營業|開門|現在有開|打烊|星等|評價|訂位|排隊|過敏|清真|純素|全素/.test(text);
   return result;
@@ -129,6 +140,7 @@ export function createRetriever(data) {
     const candidateCount=candidates.length;
     // Require evidence for the requested dish beyond shared cuisine/ingredient labels.
     if(mode==='text')candidates=candidates.filter(d=>d.focusSimilarity>=MIN_SIMILARITY&&d.coverage>=MIN_COVERAGE);
+    if(mode==='browse'&&filters.unavailableInformation?.length)candidates=[];
     const w=Math.min(.8,Math.max(0,filters.weight/100));
     candidates=candidates.map(d=>{
       const relevance=mode==='text' ? .65*d.coverage+.35*d.focusSimilarity : 1;
@@ -140,17 +152,30 @@ export function createRetriever(data) {
     const results=[...grouped.values()];
     if(sort==='distance')results.sort((a,b)=>a.distance-b.distance||b.score-a.score);
     if(sort==='name')results.sort((a,b)=>a.restaurant.name.localeCompare(b.restaurant.name,'zh-Hant'));
-    return {results,chunks:candidates.slice(0,8),matchedFoods:candidates.length,totalFoods:docs.length,ranking:{mode,focusQuery:focusText.trim(),candidateCount,rejectedForRelevance:candidateCount-candidates.length,minimumSimilarity:MIN_SIMILARITY,minimumCoverage:MIN_COVERAGE}};
+    return {results,chunks:candidates.slice(0,8),matchedFoods:candidates.length,totalFoods:docs.length,ranking:{mode,focusQuery:focusText.trim(),candidateCount,rejectedForRelevance:mode==='text'?candidateCount-candidates.length:0,minimumSimilarity:MIN_SIMILARITY,minimumCoverage:MIN_COVERAGE}};
   };
 }
+export function informationNotice(filters) {
+  const fields=filters.unavailableInformation??[];
+  const notices=fields.length?[`知識庫沒有${fields.join('及')}資料，無法確認這部分。`]:[];
+  if(filters.unsupported)notices.push('知識庫沒有即時價格、營業狀態、評價、訂位或飲食認證資料，無法確認這部分。');
+  return notices.join('\n');
+}
 export function summarize(retrieved,filters) {
-  if(!retrieved.results.length)return (filters.unsupported?'知識庫沒有即時價格、營業狀態、評價、訂位或飲食認證資料，無法確認這部分。\n':'')+(retrieved.ranking.mode==='text'&&retrieved.ranking.candidateCount?'目前知識庫沒有足夠符合餐點關鍵字的資料，不會因為餐廳距離近就補進推薦。請換個菜名或料理關鍵字。':'目前知識庫中沒有符合全部條件的餐點。可以放寬搜尋半徑，或減少一項料理、主食或食材條件。');
+  const notice=informationNotice(filters);
+  if(!retrieved.results.length){
+    if(retrieved.ranking.mode==='browse'&&filters.unavailableInformation?.length)return `${notice}\n也可以輸入菜名或料理類型查找餐廳。`;
+    const emptyMessage=retrieved.ranking.mode==='text'&&retrieved.ranking.candidateCount
+      ?'目前知識庫沒有足夠符合餐點關鍵字的資料，不會因為餐廳距離近就補進推薦。請換個菜名或料理關鍵字。'
+      :'目前知識庫中沒有符合全部條件的餐點。可以放寬搜尋半徑，或減少一項料理、主食或食材條件。';
+    return notice?`${notice}\n${emptyMessage}`:emptyMessage;
+  }
   const scope=[...filters.countries,...filters.staples,...filters.proteins,...filters.excludedProteins.map(x=>'排除'+x),...filters.excludedStaples.map(x=>'排除'+x)].join('、');
   let text=`在台北車站 ${formatDistance(filters.radius)} 直線範圍內，找到 ${retrieved.results.length} 家餐廳、${retrieved.matchedFoods} 道符合${scope?'「'+scope+'」':'目前條件'}的餐點。${retrieved.ranking.mode==='text'?'餐點關鍵字已通過相關度門檻，再依':'本次未指定額外餐點關鍵字，依已選條件篩選，再用'} ${filters.weight}% 距離權重調整順序：\n\n`;
   retrieved.results.slice(0,3).forEach((r,i)=>{text+=`${i+1}. ${r.restaurant.name}｜${r.food.name}\n   約 ${formatDistance(r.distance)}・${r.food.country}風味・符合分數 ${Math.round(r.score*100)}\n   ${r.food.description}\n\n`;});
   text+='距離採約略座標的直線估算，實際路線請點餐廳的「導航」。';
   if(filters.excludedProteins.length)text+='\n已排除資料中標記的食材；湯底、醬汁與交叉接觸未逐一查證，請向店家確認。';
-  if(filters.unsupported)text+='\n知識庫沒有即時價格、營業狀態、訂位、評價或飲食認證資料，因此無法確認這部分。';
+  if(notice)text+=`\n${notice}`;
   return text;
 }
 export function buildPrompt(retrieved,question,filters) {

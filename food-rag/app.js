@@ -1,8 +1,9 @@
-import {COUNTRY_INFO,emptyFilters,parseIntent,createRetriever,formatDistance,summarize,buildPrompt} from './engine.js';
+import {COUNTRY_INFO,emptyFilters,parseIntent,createRetriever,formatDistance,summarize,buildPrompt,informationNotice} from './engine.js';
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const safeURL=url=>{try{const u=new URL(url);return u.protocol==='https:'?u.href:'#';}catch{return '#';}};
 let data,retrieve,current,filters=emptyFilters(),limit=8,modelWorker,engine=null,aiBusy=false,questionBusy=false;
+let lastQuestionFilters=null;
 let favorites=new Set();try{favorites=new Set(JSON.parse(localStorage.getItem('taipei-food-favorites-v1')||'[]'));}catch{}
 const scenes={台灣:['#e8eadb','#6b7b59','台灣好味','🍜'],日本:['#f0e1d9','#a97b64','和の味','🍱'],韓國:['#e5e7de','#6d7b65','맛있는','🥘'],泰國:['#e8e9d5','#8a9160','อร่อย','🍛'],香港:['#efe2cf','#ac8b5b','港味日常','🥟'],中國:['#eddfd7','#a77660','食味人間','🥢'],義大利:['#e8e6d5','#8a8c62','BUON APPETITO','🍝'],美國:['#ebe2d4','#ae8a5e','GOOD FOOD','🍔'],印度:['#efe4d2','#b28c4d','स्वादिष्ट','🍛']};
 function toast(message){$('#toast').textContent=message;$('#toast').classList.add('visible');clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('#toast').classList.remove('visible'),2600);}
@@ -36,7 +37,12 @@ function renderResults(){
   if(!$('#map-panel').hidden)renderMap();
 }
 function render(){renderFilters();renderResults();updateFavoriteCount();}
-function reset(){filters=emptyFilters();limit=8;$('#question').value='';$('#chat-history').replaceChildren();render();}
+function reset(){
+  filters=emptyFilters();limit=8;lastQuestionFilters=null;
+  $('#reuse-conditions').checked=false;
+  $('#reuse-conditions').disabled=true;
+  $('#question').value='';$('#chat-history').replaceChildren();render();
+}
 function updateFavoriteCount(){$('#favorite-count').textContent=favorites.size;}
 function renderFavorites(){
   const all=retrieve({...emptyFilters(),radius:10000}).results.filter(r=>favorites.has(r.restaurant.id));
@@ -72,36 +78,63 @@ function renderKnowledge(){
   const foods=data.foods.filter(f=>[f.name,restaurants.get(f.restaurantId).name,f.country,...f.tags].join(' ').toLowerCase().includes(search));
   $('#knowledge-records').innerHTML=foods.length?foods.map(f=>`<div class="knowledge-row"><strong>${esc(f.name)}</strong><span>${esc(restaurants.get(f.restaurantId).name)} · ${esc(f.country)}</span><small>${esc([...f.staples,...f.proteins].join(' · ')||'主要食材未確認')} · ${f.supplyStatus==='brand-menu'?'品牌菜單，分店供應待確認':'分店公開餐點，當日供應依店家'}</small><div>${sourceLinks(f.sourceIds,true)}</div></div>`).join(''):'<p class="favorite-empty">找不到符合的餐點。</p>';
 }
-function addTrace(answer,result,snapshot){
+function addTrace(answer,result,snapshot,messages,willSend){
   const references=result.results.slice(0,3);
   const citations=document.createElement('div');citations.className='answer-citations';
   citations.innerHTML=references.map((r,i)=>{const s=data.sources.find(s=>s.id===r.food.sourceIds[0]);return s?`<a href="${esc(safeURL(s.url))}" target="_blank" rel="noopener noreferrer">[${i+1}] ${esc(r.restaurant.name)} ↗</a>`:'';}).join('');answer.append(citations);
   const details=document.createElement('details');details.className='retrieval-trace';
   details.innerHTML=`<summary>查看本次檢索依據 · ${references.length} 個片段</summary><p>${result.ranking.mode==='text'?'別名正規化後，以中文單字／雙字 TF-IDF 檢索額外餐點關鍵字；覆蓋率至少 60%、原始餘弦相似度至少 0.04 才列入推薦。':'本次是條件篩選，未指定額外餐點關鍵字，不以文字相似度充當符合依據。'}距離權重 ${snapshot.weight}%，只調整符合資料的排序。${result.ranking.rejectedForRelevance?`已排除 ${result.ranking.rejectedForRelevance} 筆相關度不足的候選餐點。`:''}</p>`+references.map(r=>`<div class="trace-row">${esc(r.food.name)} · ${esc(r.restaurant.name)}<br>${r.matchMode==='text'?`餐點關鍵字相似度 ${r.focusSimilarity.toFixed(3)} · 覆蓋率 ${Math.round(r.coverage*100)}%`:'已符合分類與食材條件'} · 直線 ${formatDistance(r.distance)} · 綜合 ${Math.round(r.score*100)} 分<br>${sourceLinks(r.food.sourceIds,true)}</div>`).join('');answer.append(details);
+  const prompt=document.createElement('details');
+  prompt.className='prompt-preview';
+  const heading=document.createElement('summary');
+  heading.textContent='提示詞';
+  prompt.append(heading);
+  if(!willSend){
+    const note=document.createElement('p');
+    note.textContent=result.results.length?'目前使用檢索摘要。以下是本次查詢的 AI 提示詞預覽。':'本次查詢沒有符合的資料。以下是包含空白檢索結果的提示詞預覽。';
+    prompt.append(note);
+  }
+  for(const {role,content} of messages){
+    const label=document.createElement('h4');
+    label.textContent=role==='system'?'系統指令':'使用者問題與檢索資料';
+    const value=document.createElement('pre');
+    value.textContent=content;
+    prompt.append(label,value);
+  }
+  details.append(prompt);
 }
-async function ask(question,fresh=false){
+async function ask(question,reuseConditions=false){
   if(!data||questionBusy)return;
   question=question.trim();if(!question)return;
   questionBusy=true;$('#ask-submit').disabled=true;
-  const base=fresh?emptyFilters():filters;
-  filters=parseIntent(question,base);limit=8;render();
+  const base=reuseConditions&&lastQuestionFilters?lastQuestionFilters:emptyFilters();
+  filters=parseIntent(question,base);
+  lastQuestionFilters=structuredClone(filters);
+  $('#reuse-conditions').disabled=false;
+  limit=8;render();
   const snapshot=structuredClone(filters),result=retrieve(snapshot);
+  const messages=buildPrompt(result,question,snapshot);
+  const willSend=Boolean(engine&&result.results.length);
   const message=document.createElement('div');message.className='chat-message';
   const q=document.createElement('div');q.className='chat-question';q.textContent=question;message.append(q);
   const answer=document.createElement('div');answer.className='chat-answer';
   const label=document.createElement('h3');label.textContent=engine?'✦ AI 正在根據檢索資料整理回答…':'✧ 根據美食知識庫的檢索摘要';answer.append(label);
   const body=document.createElement('div');body.textContent=summarize(result,snapshot);answer.append(body);message.append(answer);
+  addTrace(answer,result,snapshot,messages,willSend);
   $('#chat-history').replaceChildren(message);
   $('#question').value='';
   try{
-    if(engine&&result.results.length){
-      const response=await engine.chat.completions.create({messages:buildPrompt(result,question,snapshot),temperature:.2,max_tokens:500,stream:false});
+    if(willSend){
+      const response=await engine.chat.completions.create({messages,temperature:.2,max_tokens:500,stream:false});
       const generated=response.choices?.[0]?.message?.content?.trim();
-      if(generated){body.textContent=generated;label.textContent='✦ AI 回答 · 根據本次檢索結果';}
-      else label.textContent='✧ 模型未回傳內容，顯示檢索摘要';
+      if(generated){
+        const notice=informationNotice(snapshot);
+        body.textContent=notice&&!generated.includes(notice)?`${generated}\n\n${notice}`:generated;
+        label.textContent='✦ AI 回答 · 根據本次檢索結果';
+      }else label.textContent='✧ 模型未回傳內容，顯示檢索摘要';
     }else if(engine)label.textContent='✧ 沒有符合資料，顯示檢索摘要';
   }catch(error){label.textContent='✧ AI 本次無法完成，改用檢索摘要';console.warn('Local model completion failed:',error);}
-  finally{addTrace(answer,result,snapshot);questionBusy=false;$('#ask-submit').disabled=false;}
+  finally{questionBusy=false;$('#ask-submit').disabled=false;}
 }
 async function loadAI(){
   if(aiBusy||engine)return;
@@ -121,13 +154,13 @@ async function loadAI(){
 document.addEventListener('click',event=>{
   const target=event.target.closest('button,[data-map-id]');if(!target)return;
   if(target.dataset.save){toggleFavorite(target.dataset.save);return;}
-  if(target.dataset.question){ask(target.dataset.question,true);return;}
+  if(target.dataset.question){ask(target.dataset.question);return;}
   if(target.dataset.filter){const key=target.dataset.filter,value=target.dataset.value;filters[key]=filters[key].includes(value)?filters[key].filter(x=>x!==value):[...filters[key],value];if(key==='proteins')filters.excludedProteins=filters.excludedProteins.filter(x=>x!==value);if(key==='staples')filters.excludedStaples=filters.excludedStaples.filter(x=>x!==value);limit=8;render();return;}
   if(target.dataset.mapId){jumpToRestaurant(target.dataset.mapId);return;}
   if(target.classList.contains('dialog-close')){target.closest('dialog').close();return;}
   if(['reset-filters','empty-reset','clear-query'].includes(target.id)){reset();return;}
 });
-$('#ask-form').addEventListener('submit',event=>{event.preventDefault();ask($('#question').value);});
+$('#ask-form').addEventListener('submit',event=>{event.preventDefault();ask($('#question').value,$('#reuse-conditions').checked);});
 $('#knowledge-open').addEventListener('click',()=>{renderKnowledge();$('#knowledge-dialog').showModal();});
 $('#sources-open').addEventListener('click',()=>{renderKnowledge();$('#knowledge-dialog').showModal();$('#source-list').scrollIntoView({block:'start'});});
 $('#knowledge-search').addEventListener('input',renderKnowledge);
